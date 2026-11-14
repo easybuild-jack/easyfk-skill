@@ -1,0 +1,55 @@
+# 使用手册清单：每行一个相对仓库根目录的路径，复制到 manuals/ 下并保持原目录结构（保证手册之间的相对链接可用）。
+# 以 # 开头的行和空行忽略。重复 / 营销类文档（特点、介绍、推广）不纳入。
+
+# ---------- 框架总览 ----------
+easyfk-base/EasyFK框架开发手册.md
+easyfk-base/核心模块说明.md
+easyfk-component/易架构组件项目说明文档.md
+easyfk-dependencies/dependencies开发手册.md
+
+# ---------- easyfk-base ----------
+easyfk-base/easyfk-core/core开发文档.md
+easyfk-base/easyfk-thread/thread开发手册.md
+easyfk-base/easyfk-queue/queue-disruptor/disruptor使用手册.md
+easyfk-base/easyfk-serializer/serializer-fory/fory序列化使用手册.md
+easyfk-base/easyfk-authority/auth开发文档.md
+easyfk-base/easyfk-web/web-prd/web-prd开发手册.md
+easyfk-base/easyfk-web/web-micro/web-micro开发手册.md
+easyfk-base/easyfk-gateway/gateway开发文档.md
+
+# ---------- easyfk-component ----------
+easyfk-component/component-db/db-redis/db-redis开发手册.md
+easyfk-component/component-db/db-mongo/db-mongo开发手册.md
+easyfk-component/component-db/db-clickhouse/db-clickhouse开发手册.md
+easyfk-component/component-cache/cache-redis/cache-redis-开发手册.md
+easyfk-component/component-cache/cache-caffeine/Cache-Caffeine开发手册.md
+easyfk-component/component-autoId/autoId-redis/AutoId-Redis开发手册.md
+easyfk-component/component-lock/lock-redisson/lock-redisson开发手册.md
+easyfk-component/component-orm/orm-mybatis/orm-mybatis开发手册.md
+easyfk-component/component-orm/orm-flex/orm-flex开发手册.md
+easyfk-component/component-orm/orm-hibernate/orm-hibernate开发手册.md
+easyfk-component/component-orm/orm-sharding/orm-sharding开发手册.md
+easyfk-component/component-mq/mq-rocket/mq-rocket开发手册.md
+easyfk-component/component-mq/mq-rocket/RocketMQ使用教程.md
+easyfk-component/component-mq/mq-rabbit/mq-rabbit开发手册.md
+easyfk-component/component-mq/mq-rabbit/RabbitMQ使用教程.md
+easyfk-component/component-mq/mq-kafka/mq-kafka使用教程.md
+easyfk-component/component-rpc/rpc-cloud/rpc-cloud开发手册.md
+easyfk-component/component-rpc/rpc-dubbo/rpc-dubbo开发手册.md
+easyfk-component/component-chronicle/chronicle-map/chronicle-map使用手册.md
+easyfk-component/component-chronicle/chronicle-queue/chronicle-queue-使用手册.md
+easyfk-component/component-websocket/websocket-server/websocket开发文档.md
+easyfk-component/component-websocket/websocket-server/websocket前端对接文档.md
+easyfk-component/component-job/job-xxl/XXL-JOB组件使用手册.md
+
+# ---------- easyfk-aeron ----------
+easyfk-aeron/docs/Aeron 组件使用手册.md
+easyfk-aeron/docs/Aeron Chronicle 状态存储指南.md
+easyfk-aeron/docs/序列化Codec接入指南.md
+easyfk-aeron/docs/监控指南.md
+easyfk-aeron/docs/跨语言互通指南.md
+easyfk-aeron/docs/aeron协议说明.md
+
+# ---------- aeron-cluster / etcd-cluster ----------
+aeron-cluster/docs/Cluster使用手册.md
+etcd-cluster/docs/etcd集群使用文档.md
