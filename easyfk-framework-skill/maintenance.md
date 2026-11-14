@@ -1,9 +1,31 @@
 # easyfk-skill 套件维护流程
 
-用户要求维护本套件时按本文执行，例如：
+> **读者**：本套件的作者本人。维护指的是让 skill 跟上 easyfk 框架的演进——升级到新版本、对齐某个模块的改动，需要 easyfk 源码和框架内部知识，只有作者能做。
+>
+> **使用方不需要看本文**。业务项目的开发者接入或更新 skill，只要重新克隆仓库跑一次 `install.ps1` / `install.sh`，方法见根目录 [README](../README.md)。
+
+作者要求维护本套件时按本文执行，例如：
 
 - “把 easyfk-skill 升级到 3.5.16，源码在 D:\codespace\framework\easyfk_3.5.16” → 流程 A（框架升级版本）
 - “component-cache 改了，对齐一下 skill”、“3.2.12 的 orm 模块加了配置项，更新 skill” → 流程 B（同一版本里模块改了）
+
+直接对 AI 说这两类话即可，AI 会从套件目录的实际位置拼出绝对路径执行，套件目录移到哪里都可以。模块 skill 文档只保存在 `versions/<版本>/modules/`，没有别处的源稿，修改直接改那里。
+
+## 0. 要维护的文件
+
+```
+easyfk-skill/
+├── README.md                        使用方看的介绍：能力、安装、用法（不写维护方法）
+├── install.ps1 / install.sh         安装脚本，新增或改名 skill 时同步修改
+├── easyfk-framework-skill/
+│   ├── SKILL.md                     跨版本不变的能力地图（§2、§4、§5、§6、§7 随模块增减更新）
+│   ├── maintenance.md               本文件
+│   ├── versions/index.md            已收录版本与路由规则
+│   ├── versions/<版本>/             VERSION.md、manuals.txt、modules/、manuals/
+│   └── scripts/sync-references.ps1  新建版本快照的同步脚本
+├── easyfk-dev-skill/                SKILL.md、rules/*.md
+└── easyfk-reverse-skill/            SKILL.md
+```
 
 ## 1. 路径规则（先做）
 
