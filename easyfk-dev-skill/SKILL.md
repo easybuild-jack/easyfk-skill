@@ -3,8 +3,8 @@ name: easyfk-dev-skill
 description: >-
   EasyFK（易架构）项目的开发规范：告诉 AI 在 easyfk 项目里怎样规范地写业务代码。要用任何能力时先查 easyfk-framework-skill 有没有现成模块，能满足就用；写能工作的最少实现（YAGNI、先复用、修 bug 改根因），遵守阿里开发规范，日志和注释用中文。
   普通数据库业务项目按分层写：模型（Dto/Param/Req/EditReq/Resp）→ 持久层（Entity/Mapper/Repository，MyBatis-Plus，String UUID 主键）→ Service → Api / ApiServerImpl → Controller → Remote（Cloud / Dubbo），异常默认用错误码枚举、多语言时用 i18n；已有项目先读现有结构和同类代码照写，从零开发时先和用户确定用 single / sc / smart / 组件化中的哪种结构再建工程。架构类项目（为业务开发服务、偏架构层的组件、SDK、starter、中间件、引擎、框架底层，不是普通数据库应用）按 rules/11-architecture.md 定模块拆分、包结构、线程模型与状态、热路径与 GC、确定性、对外契约兼容、自动配置和依赖版本，要给别人接入的必须写使用说明文档。
-  文档按改动大小决定：小改动和 bug 修复不新建文档；重大调整先写需求、分析、计划，放 docs/requirement、docs/design、docs/plan；流程图、时序图、架构图按需用 Mermaid 画；项目级迭代记录按时间倒序。写完先自检。
-  仅在识别到 easyfk 的项目中使用：构建文件引入了 easyfk- 开头的组件坐标（如 easyfk-dependencies），或源码包名以 com.mcst 开头；从零新建时用户明确要求按 easyfk 建也算。识别不到就不使用，开工前先按正文「项目识别」确认。在这类项目中新增或修改 Controller、Service、Api、Repository、Mapper、Entity、Dto、Remote、Feign、Dubbo、异常、i18n、配置类，开发组件、SDK、starter、中间件、引擎、框架底层、Aeron、aeron-cluster、Disruptor、热路径、自动配置，新建项目或模块、写需求、设计、计划、迭代记录、画图、代码自检时使用。
+  文档按改动大小决定：小改动和 bug 修复不新建文档；重大调整先写需求、分析、计划，放 docs/requirement、docs/design、docs/plan；流程图、时序图、架构图按需用 Mermaid 画；项目级迭代记录按时间倒序。项目说明文档（docs/<项目名>项目说明.md）固定五节：背景、需求、功能、模块设计及划分、业务数据依赖；业务数据依赖列清本项目依赖、自管理、对外提供了哪些业务数据（如行情数据、仓位数据）及各自的来源、代码位置和变更影响，业务或需求变更时据此判断要不要改、改哪些地方。写完先自检。
+  仅在识别到 easyfk 的项目中使用：构建文件引入了 easyfk- 开头的组件坐标（如 easyfk-dependencies），或源码包名以 com.mcst 开头；从零新建时用户明确要求按 easyfk 建也算。识别不到就不使用，开工前先按正文「项目识别」确认。在这类项目中新增或修改 Controller、Service、Api、Repository、Mapper、Entity、Dto、Remote、Feign、Dubbo、异常、i18n、配置类，开发组件、SDK、starter、中间件、引擎、框架底层、Aeron、aeron-cluster、Disruptor、热路径、自动配置，新建项目或模块、写需求、设计、计划、迭代记录、维护业务数据依赖、画图、代码自检时使用。
 ---
 
 # EasyFK 开发规范
@@ -57,7 +57,7 @@ easyfk-framework-skill 写了不要引入的构件和同类库，不要加。
 2. 已有项目**照现有代码写**：命名、包路径、Bean 注册方式、返回值风格，以同模块里已有的同类代码为准。本规范给出的是默认写法，现有项目已有统一约定时听项目的；但正确性规则（事务、异常、分层不越级、Remote 契约约束）以本规范为准。现有代码违反这些规则时，本次改到的地方按规范写，没改到的不顺手重构，在回复里提一句。
 3. 代码尽量符合《阿里巴巴 Java 开发手册》。先检查条件，不满足就直接结束；主流程放在所有条件成立之后，少用层层嵌套的 if。日志和注释用中文，专业词汇可以用英文。
 4. 写能工作的最少实现：不做推测出来的需求，先复用，不加没要求的抽象，修 bug 改根因。细则见 §5。
-5. 文档按改动大小决定，见 [rules/10-docs.md](rules/10-docs.md)。小改动不新建文档；重大调整先出文档再写代码。
+5. 文档按改动大小决定，见 [rules/10-docs.md](rules/10-docs.md)。小改动不新建文档；重大调整先出文档再写代码。改动让业务数据依赖变了（新增外部数据来源、自管理数据增减、对外提供的数据变了），同步维护项目说明里的「业务数据依赖」一节，见 [rules/10-docs.md](rules/10-docs.md) §5.1。
 6. 代码写完先自检（§6）。自检没过，不宣称完成。
 
 ## 3. 分层规范
@@ -89,7 +89,7 @@ Controller ──> IXxxApi ──实现──> XxxApiServerImpl（本地）/ Xxx
 | [07-remote.md](rules/07-remote.md) | Spring Cloud（OpenFeign）与 Dubbo 的契约、提供方、消费方 |
 | [08-error.md](rules/08-error.md) | 错误码枚举（默认）与 i18n 异常 |
 | [09-config.md](rules/09-config.md) | Bean 注册、配置属性类、自动配置、依赖声明 |
-| [10-docs.md](rules/10-docs.md) | 要不要写文档、文档目录、画图、项目说明、迭代记录 |
+| [10-docs.md](rules/10-docs.md) | 要不要写文档、文档目录、画图、项目说明（含业务数据依赖）、迭代记录 |
 | [11-architecture.md](rules/11-architecture.md) | 架构类项目（组件、中间件、引擎、框架底层）：开工方式、组件选型、模块拆分、包结构、线程模型与状态、热路径与 GC、确定性、对外契约、自动配置、依赖版本、使用说明、测试与自检 |
 
 ORM 只给 MyBatis-Plus 写法。项目用 MyBatis-Flex 或 Hibernate 时，分层不变，持久层写法读 `modules/easyfk-component-orm-skill.md` 和 `modules/easyfk-repository-skill.md`，并参照项目里已有的实体。
@@ -152,8 +152,9 @@ ORM 只给 MyBatis-Plus 写法。项目用 MyBatis-Flex 或 Hibernate 时，分�
 5. **必要测试**：用项目已有的测试方式，覆盖主路径、关键分支和失败路径。用户明确说不测试时跳过，并在回复里说明。
 6. **性能**：看高并发下会不会成为热点：循环里查库或远程调用、全表查询、`queryList` 没有 `top`、锁和共享可变状态、热路径上频繁创建大对象。能指出具体热点就改；说不出热点，不为性能加缓存、对象池或异步。
 7. **有没有多写**：没要求的抽象、重复造的工具、能删的代码，删掉。
-8. **架构类项目的补充项**：再按 [11-architecture.md](rules/11-architecture.md) §11 查。
-9. 自检结果在回复里写几句：对齐了没有、补了什么测试、性能上改了什么或为什么不用改。
+8. **业务数据依赖**：这次改动有没有新增外部数据来源、新增或删掉自管理的数据、改变对外提供的数据范围？有就按 [rules/10-docs.md](rules/10-docs.md) §5.1 更新项目说明的「业务数据依赖」一节；没有就在回复里说一句这次不涉及。
+9. **架构类项目的补充项**：再按 [11-architecture.md](rules/11-architecture.md) §11 查。
+10. 自检结果在回复里写几句：对齐了没有、补了什么测试、性能上改了什么或为什么不用改。
 
 ## 项目识别
 
