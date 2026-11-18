@@ -81,17 +81,13 @@ sh easyfk-skill/install.sh [<skills 目录>]
 | 「这个老项目没人维护了，帮我理清业务」 | 找出所有入口（Controller、MQ 消费、XXL-JOB、Aeron、etcd 选主……）→ 输出业务分析报告 + 架构分析报告 |
 | 「升级到新版 easyfk，哪些写法要改」 | 对比两版快照，列出改名的配置项、变化的类名，保留旧写法并注明「从哪个版本起改为」 |
 
-## 6. 依赖：框架 jar 的私有仓库
+## 6. 框架依赖
 
-easyfk 不开源但可免费使用，`com.mcst:*` 的 jar 只发布在腾讯 CNB 的 Maven 私服上，Maven Central 和阿里云镜像里都没有。不配置私服，依赖一律解析失败（找不到构件或 401）。
+easyfk **不开源**，但可免费使用。框架的 jar 不发布在 Maven Central 等公共仓库，需要通过官方私有的 Maven 仓库获取。
 
-| 项 | 值 |
-|---|---|
-| 仓库地址 | `https://maven.cnb.cool/jackorg/easybuild/-/packages/` |
-| 用户名 | `cnb` |
-| 访问令牌 | `a16k9BILdyo166eyeyja7Old60H`（外部访客令牌 `eb-guest`，只能下载） |
+仓库地址、访问令牌，以及 Maven / Gradle 的具体配置方法，见官网：<https://www.easybuild.pro/easyfk>
 
-完整的 `settings.xml` 与 Gradle 配置示例见 [easyfk-framework-skill/SKILL.md](easyfk-framework-skill/SKILL.md) §8.1。要点：令牌只写在本机配置（`~/.m2/settings.xml`、`~/.gradle/gradle.properties`），不写进项目构建文件；镜像的 `mirrorOf` 要排除 `jackorg-easybuild`。
+这一步是前提：没有配好仓库，`com.mcst:*` 的依赖会一律解析失败（找不到构件或 401）。
 
 ## 7. 目录结构
 
