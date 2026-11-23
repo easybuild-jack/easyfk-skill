@@ -144,11 +144,9 @@ dependencies {
 | `com.mcst:db-postgresql` | EasyFK PostgreSQL 封装 |
 | `com.mcst:db-redis` | EasyFK Redis 封装 |
 | `com.mcst:db-mongo` | EasyFK MongoDB 封装 |
-| `com.mcst:db-influx` | EasyFK InfluxDB 封装 |
 | `com.mcst:db-clickhouse` | EasyFK ClickHouse 封装 |
 | `com.mysql:mysql-connector-j` | MySQL 驱动 |
 | `org.postgresql:postgresql` | PostgreSQL 驱动 |
-| `com.influxdb:influxdb-client-java` | InfluxDB 客户端 |
 | `com.alibaba:druid-spring-boot-3-starter` | Druid 连接池（Boot 3） |
 | `com.mcst:ds-druid` | EasyFK Druid 依赖聚合 |
 | `org.apache.shardingsphere:shardingsphere-jdbc-core-spring-boot-starter` | ShardingSphere 分库分表 |
@@ -589,7 +587,7 @@ BOM 内部将依赖按领域进行了分组，以下列出各分组及其包含�
 | **serializer** | serializer-base、serializer-fory |
 | **logging** | log-log4j2、log-logback、logstash-logback-encoder |
 | **skywalking** | skywalking-log4j2、skywalking-logback |
-| **database** | db-influx、db-redis、db-mongo、db-mysql、db-postgresql、db-clickhouse、influxdb-client、postgresql、shardingsphere |
+| **database** | db-redis、db-mongo、db-mysql、db-postgresql、db-clickhouse、postgresql、shardingsphere |
 | **datasource** | druid-spring-boot-3-starter、ds-druid |
 | **orm** | orm-flex、orm-hibernate、orm-mybatis、orm-sharding |
 | **mybatis** | mybatis-plus-starter、mysql-connector、dynamic-datasource |

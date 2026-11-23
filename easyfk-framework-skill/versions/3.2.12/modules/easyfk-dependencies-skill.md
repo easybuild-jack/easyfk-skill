@@ -60,7 +60,7 @@
 |---|---|---|---|---|---|
 | `mysql` | `com.mysql:mysql-connector-j` | 9.4.0 | 9.4.0 | db-mysql | **高于** Boot 自带的 8.3.0 |
 | `postgresql` | `org.postgresql:postgresql` | 42.7.8 | 42.7.8 | db-postgresql | 高于 Boot 自带的 42.6.2 |
-| `influxdb` | `com.influxdb:influxdb-client-java` | 7.3.0 | 7.3.0 | db-influx | InfluxDB 2.x 客户端（Flux） |
+| `influxdb` | `com.influxdb:influxdb-client-java` | 7.3.0 | 7.3.0 | **无（模块已下线）** | InfluxDB 2.x 客户端（Flux）；`db-influx` 已下线，别名仍留在 BOM 里但没有任何 easyfk 模块引用 |
 | `clickhouse` | `com.clickhouse:clickhouse-jdbc` | 0.9.4 | 0.9.4 | db-clickhouse | 配合 HttpClient5 传输 |
 | `client5` | `org.apache.httpcomponents.client5:httpclient5` | 5.2.3 | 5.2.3 | db-clickhouse | 与 Boot 一致 |
 | `client5Core` | `org.apache.httpcomponents.core5:httpcore5` | 5.2.5 | 5.2.5 | db-clickhouse | 与 Boot 一致 |

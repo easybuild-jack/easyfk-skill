@@ -35,9 +35,12 @@ easyfk 版本即项目导入的 BOM `com.mcst:easyfk-dependencies:<版本>` 的�
 1. 打开 [versions/index.md](versions/index.md)，定位 `versions/<版本>/`：精确命中直接使用；没有对应快照时用不高于项目版本的最近快照，并告诉用户"差异以项目实际源码和 BOM 为准"。
 2. 读该目录的 `VERSION.md`：技术基线（JDK、Spring、三方库版本）、构建参数、本版本注意事项、文档索引。
 3. 用到某个模块时，读该版本 `modules/` 中对应的 skill 文档（已逐行对照源码复查）。本文中出现的 `xxx-skill.md` 都指这个目录下的文件。
-4. 需要完整配置项或示例时，再读该版本 `manuals/` 中的使用手册。
+4. 需要**精确签名**——方法重载、参数顺序、返回类型、常量与枚举取值、配置项默认值、注解属性、引入后自动生效的配置类——时，读该版本 `api/` 下对应的 `*.api.md`（入口 `versions/<版本>/api/INDEX.md`，文件与模块一一对应）。这类文件由脚本从源码提取，只列签名不含用法；**按需只读相关类的段落，不要整份读**。
+5. 需要完整配置项或示例时，再读该版本 `manuals/` 中的使用手册。
 
-**可信度顺序：项目实际依赖的源码 > `modules/*-skill.md` > `manuals/*`。**
+**可信度顺序：项目实际依赖的源码 > `api/*.api.md`（签名）与 `modules/*-skill.md`（用法）> `manuals/*`。**
+
+不凭记忆写类名、方法名和配置项：`modules/` 里没写、`api/` 里查不到的，就是框架没有。
 
 ## 1. 定位与原则
 
@@ -72,7 +75,7 @@ easyfk 版本即项目导入的 BOM `com.mcst:easyfk-dependencies:<版本>` 的�
 
 ## 4. 模块能力清单
 
-坐标均为 `com.mcst:<artifact>`，版本由 BOM 管理。
+坐标均为 `com.mcst:<artifact>`，版本由 BOM 管理。表中「文档」列是该模块的用法文档（`modules/`）；**精确签名、常量取值、配置项默认值**查同版本 `api/` 下同名的 `*.api.md`。
 
 ### 4.1 easyfk-base（底座）
 
@@ -97,7 +100,7 @@ easyfk 版本即项目导入的 BOM `com.mcst:easyfk-dependencies:<版本>` 的�
 | 模块 | 提供的能力 | 解决的问题 | 文档 |
 |---|---|---|---|
 | `db-redis` | Redis 读写、发布订阅、多种序列化器，支持动态多数据源 | 非缓存类 Redis 数据访问 | `easyfk-component-db-skill.md` |
-| `db-mongo` / `db-clickhouse` / `db-influx` | MongoDB、ClickHouse、InfluxDB 接入 | 文档库、分析库、时序库 | `easyfk-component-db-skill.md` |
+| `db-mongo` / `db-clickhouse` | MongoDB、ClickHouse 接入 | 文档库、分析库 | `easyfk-component-db-skill.md` |
 | `db-mysql` / `db-postgresql` | 关系库驱动 | 与 ORM 搭配使用 | `easyfk-component-db-skill.md` |
 | `cache-redis` | `ICacheService` 的默认实现 + Spring Cache 注解缓存 | 分布式缓存；框架内防重、幂等、鉴权等组件依赖它 | `easyfk-component-cache-skill.md` |
 | `cache-caffeine` | 进程内本地缓存管理器，可选 Spring Cache 注解缓存 | 本地缓存 | `easyfk-component-cache-skill.md` |
@@ -111,6 +114,8 @@ easyfk 版本即项目导入的 BOM `com.mcst:easyfk-dependencies:<版本>` 的�
 | `websocket-server` / `websocket-api` | WebSocket 接入服务；业务方通过 api 推送 | 服务端主动推送 | `easyfk-component-websocket-skill.md` |
 | `job-xxl` | XXL-JOB 执行器封装，可自动注册任务 | 分布式定时任务（必须有调度中心） | `easyfk-component-job-skill.md` |
 | `config-nacos` / `registry-nacos` / `protect-sentinel` / `transaction-seata` / `doc-knife4j` | 纯依赖聚合，使用官方配置 | 配置中心、注册中心、限流熔断、分布式事务、接口文档 | `easyfk-component-infra-skill.md` |
+
+> 多级缓存（`cache-mult`）与 InfluxDB（`db-influx`）两个子模块已下线，各版本快照都不再收录（`modules/`、`api/`、`manuals/` 中均已移除）。需要多级缓存时用 `cache-caffeine` + `cache-redis` 自行组合，需要时序库时自行引入 `influxdb-client-java`；遇到旧代码里的这两个坐标，按"框架已不提供"处理。
 
 ### 4.3 独立工程
 
@@ -136,7 +141,7 @@ easyfk 版本即项目导入的 BOM `com.mcst:easyfk-dependencies:<版本>` 的�
 | 关系库 | `orm-mybatis`（默认）/ `orm-flex` / `orm-hibernate` + `db-mysql` / `db-postgresql`，连接池 `ds-druid` | `spring.datasource.*` |
 | 分库分表 | `orm-sharding`（使用前先看 `VERSION.md` 的兼容性提示） | ShardingSphere 官方配置 |
 | Redis 非缓存数据 | `db-redis` | `spring.data.redis`、`easyfk.config.db.redis` |
-| MongoDB / ClickHouse / InfluxDB | `db-mongo` / `db-clickhouse` / `db-influx` | `easyfk.config.db.clickhouse` / `influx` |
+| MongoDB / ClickHouse | `db-mongo` / `db-clickhouse` | `easyfk.config.db.clickhouse` |
 | 分布式缓存 | `cache-redis` | `easyfk.config.cache.redis` |
 | 本地缓存 | `cache-caffeine` | `easyfk.config.cache.caffeine` |
 | 分布式锁 | `lock-redisson` | `easyfk.config.lock.redisson` |
@@ -345,20 +350,23 @@ repositories {
 ```
 easyfk-framework-skill/
   SKILL.md                    本文件：跨版本不变的能力地图
-  maintenance.md              套件维护流程：升级到新版本、对齐模块修改
+  maintenance.md              套件维护流程：升级到新版本、对齐模块修改、重生成 API 文档
   versions/
     index.md                  已收录版本与路由规则
     <easyfk版本>/
       VERSION.md              技术基线、构建参数、注意事项、与上一版差异、快照修订记录、文档索引
       manuals.txt             本版本收录的手册清单
       modules/                本版本的模块 skill 文档（已对照源码复查；唯一一份，直接在这里修改）
+      api/                    本版本的 API 签名速查（脚本从源码提取，按模块一份，入口 INDEX.md）
       manuals/                本版本的使用手册副本（保持仓库原目录结构）
   scripts/
     sync-references.ps1       新建版本快照：复制上一版 modules/，从该版本源码拷贝使用手册
+    gen-api.py                从该版本源码重新生成 api/（签名、常量、配置项、自动配置类）
 ```
 
 ## 10. 维护
 
-- 完整流程见 [maintenance.md](maintenance.md)：流程 A 是框架升级版本（以上一版快照为起点生成新快照、逐份复查模块文档、写 `VERSION.md`、登记），流程 B 是同一版本里模块改了。执行时所有路径都用绝对路径。
+- 完整流程见 [maintenance.md](maintenance.md)：流程 A 是框架升级版本（以上一版快照为起点生成新快照、逐份复查模块文档、重新生成 `api/`、写 `VERSION.md`、登记），流程 B 是同一版本里模块改了，流程 C 是只补或重生成 API 文档。执行时所有路径都用绝对路径。
 - 模块 skill 文档只有快照里这一份，没有别处的源稿；修改直接改 `versions/<版本>/modules/` 下的文件。同步脚本从不覆盖 `modules/`，只负责复制上一版快照和拷贝使用手册。
+- `versions/<版本>/api/` 是生成物，不要手改：源码变了就重跑 `scripts/gen-api.py` 覆盖。`modules/` 里的说明与 `api/` 里的签名冲突时，以 `api/`（源码）为准并修正 `modules/`。
 - 本文件只放跨版本不变的能力描述；某个版本特有的说明写进该版本的 `VERSION.md`。模块新增或移除时同步更新 §2、§4、§5。

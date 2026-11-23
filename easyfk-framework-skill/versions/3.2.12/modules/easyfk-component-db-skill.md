@@ -1,9 +1,10 @@
 # component-db Skill 参考文档
 
-> 所属项目：`easyfk-component`　子模块：`db-redis`、`db-mysql`、`db-postgresql`、`db-mongo`、`db-clickhouse`、`db-influx`
+> 所属项目：`easyfk-component`　子模块：`db-redis`、`db-mysql`、`db-postgresql`、`db-mongo`、`db-clickhouse`
 > 坐标：`com.mcst:db-<子模块>:3.2.12`
-> 依据：6 个子模块全部源码，对齐 `db-redis开发手册.md`、`db-redis技术特点.md`、`db-mongo开发手册.md`、`db-mongo技术特点.md`、`db-clickhouse开发手册.md`、`db-clickhouse技术特点.md`（db-influx、db-mysql、db-postgresql 没有文档）。
+> 依据：5 个子模块全部源码，对齐 `db-redis开发手册.md`、`db-redis技术特点.md`、`db-mongo开发手册.md`、`db-mongo技术特点.md`、`db-clickhouse开发手册.md`、`db-clickhouse技术特点.md`（db-mysql、db-postgresql 没有文档）。
 > 以源码为准；差异见文末「复查记录」。
+> **`db-influx`（InfluxDB 时序库）已下线**，不再收录其用法与签名；需要时序库时自行引入 `influxdb-client-java`。
 
 ---
 
@@ -16,8 +17,6 @@
 | `db-postgresql` | 只有 `postgresql` 驱动依赖 | — | 无 |
 | `db-mongo` | `BaseMongoEntity` → `BaseSpringMongoDAO` → `BaseMongoRepositoryImpl`（实现 `IBaseRepository`） | spring-data-mongodb、repository、service-base | `MongoAutoConfig`（开启审计） |
 | `db-clickhouse` | `ClickHouseJdbcHolder`（内部持有 Hikari 数据源，不注册为 DataSource Bean）+ `BaseClickHouseRepositoryImpl`（拼接并校验 SQL） | clickhouse-jdbc、starter-jdbc、service-base | `ClickHouseConfig`（配置了 `url` 才生效） |
-| `db-influx` | `InfluxDBClient` + `BaseFluxRepositoryImpl`（拼接 Flux 查询） | influxdb-client-java | `InfluxDBConfig`（**无条件**，缺少 url/token 时启动报 `IllegalStateException`） |
-
 ORM（MyBatis/Flex/Hibernate）位于 `component-orm`，关系库只需要引 `db-mysql` / `db-postgresql` 驱动，再配合 orm 模块使用。
 
 ---
@@ -191,18 +190,7 @@ easyfk.config.db.clickhouse:
 
 ---
 
-## 5. db-influx
-
-- 配置 `easyfk.config.db.influx`：`url`、`token`、`org`、`bucket`。`InfluxDBConfig` 无条件创建客户端，缺少 `url`/`token` 时启动报 `IllegalStateException` 并给出配置项名。
-- 实体使用 influx 的 `@Measurement(name)` 和 `@Column(name, tag, timestamp)`。Repository：`extends BaseFluxRepositoryImpl<T>`，提供 `insert(entity, WritePrecision)`、`insertBatch`、`queryList(FluxSearchCondition)`、`count`、`deleteByTimeRange(start, stop[, entity])`。
-- `FluxSearchCondition`：`start`（默认 `-1h`）、`stop`（默认 `now()`）、`selectFields`、`equalsConditions`、`asc/descFields`、`defaultDesc`、`top`、`pageSearch`（不分页时默认 limit 1000）、`likeConditions`（`strings.containsStr` 包含匹配）。`customSql` 不支持，设置后抛 `UnsupportedOperationException`（需要自定义 Flux 时直接用 `InfluxDBClient`）。`FluxSearchConditionUtil.createSearchCondition(SearchRequest, Class)` 可把通用查询请求转换过来。
-- 读写列名一致：`@Column.name` 优先，否则用 Java 字段名。
-- Flux 查询是字符串拼接：列名按标识符正则校验，字符串值转义 `\`、`"`、`$`；`start/stop` 只接受 `now()`、相对时长（如 `-1h`）、Unix 秒或 RFC3339。
-- `count` 累加所有序列表的计数。`deleteByTimeRange` 的谓词始终限定 `_measurement`，带实体时追加 tag 等值条件（delete API 只支持 tag）。
-
----
-
-## 6. 生成代码时的规则
+## 5. 生成代码时的规则
 
 **Do**
 - Redis 单实例用简单模式（`spring.data.redis.*`）；需要多实例或多库时用动态模式。
@@ -210,7 +198,7 @@ easyfk.config.db.clickhouse:
 - 计数器用 `autoId` / `autoIdByExpire` 或 Lua，不要先 `putObject` 数值再 INCR。
 - 缓存的业务类放在 `com.mcst.` 下，或把包前缀加入 `trusted-packages`，否则 Jackson/FastJSON 反序列化会拒绝。
 - Mongo 的 DTO 主键字段用 `String id`；`saveOrUpdateBySelective` 会按 id 是否为空选择更新或插入。
-- ClickHouse、Influx 的字段名、排序、聚合和自定义 SQL 只能使用代码常量或白名单值（框架只做兜底校验）。
+- ClickHouse 的字段名、排序、聚合和自定义 SQL 只能使用代码常量或白名单值（框架只做兜底校验）。
 - ClickHouse 条件里需要相对时间时用 `ClickHouseRelativeTime.of("-1h")`。
 - ClickHouse 直接执行 SQL 时注入 `ClickHouseJdbcHolder` 并调用 `getJdbcTemplate()`。
 
@@ -218,12 +206,11 @@ easyfk.config.db.clickhouse:
 - 不要把 `publish(channel, msg, x)` 的第三个参数当作数据源（它是频道前缀）。
 - 不要在生产大库上频繁调用 `getKeys`（KEYS 是阻塞命令）。
 - 不要再按名称注入 `clickHouseDataSource` / `clickHouseJdbcTemplate`（已不是 Bean）。
-- 不要给 Influx 设置 `customSql`（会抛异常）；不要用 Influx 的 `deleteByTimeRange` 按非 tag 字段删除（delete API 只支持 tag）。
-- 不要只引入 db-influx 而不配置它。
+- 不要再引入 `db-influx` 或使用 `BaseFluxRepositoryImpl` / `FluxSearchCondition`：该子模块已下线，坐标与类都不再提供。
 
 ---
 
-## 7. 复查记录
+## 6. 复查记录
 
 | # | 文档位置 | 文档描述 | 源码实际 |
 |---|---|---|---|
@@ -244,4 +231,4 @@ easyfk.config.db.clickhouse:
 | 15 | clickhouse 手册 §10.1、技术特点 | 自动转义，从源头杜绝 SQL 注入 | 只有"值"做了转义。字段名、selectFields、排序、分组、聚合函数、`customWhere`、`customSql` 都原样拼接；字符串值如果碰巧匹配 `-1h` 这类格式，会被当成时间表达式（`now() - INTERVAL`） **已修复**：标识符正则校验；聚合函数/customWhere/customSql 拒绝分号、注释和 DDL/DML，customSql 限 SELECT/WITH；相对时间只在显式使用 `ClickHouseRelativeTime` 时渲染 |
 | 16 | clickhouse 手册 §4.2 | `primaryKey`、`timestamp`、`partitionKey` 注解属性 | 全部未被使用。insert/update 不跳过 static 字段（`serialVersionUID` 会被当作列 `serial_version_u_i_d`）；`update` 不跳过 `ignore` 字段 **已修复**：跳过 static/transient/合成与 `ignore` 字段；`primaryKey`/`partitionKey` 不进入 UPDATE SET；`timestamp` 字段作为默认时间列 |
 | 17 | clickhouse 手册 §9、技术特点 | 延迟初始化，不影响主数据源 | `@Lazy` 只是推迟创建。DataSource 候选变成两个，主数据源没有 `@Primary` 时，Boot 中带 `@ConditionalOnSingleCandidate` 的自动配置（JdbcTemplate、MyBatis 等）会被跳过 **已修复**：DataSource/JdbcTemplate 不再注册为 Bean，改由 `ClickHouseJdbcHolder` 懒加载持有，主数据源保持唯一候选 |
-| 18 | db-influx（无文档） | — | 写入时字段名用 `@Column.name` 或驼峰字段名，读取时却用 `camelToUnderline`，**驼峰字段读不回来**。按实体删除时 predicate 用的是 Flux 语法（`|> filter`），不符合 delete API 的谓词语法；不带实体时没有 predicate，会删除整个 bucket 在该时间段内的数据。`count` 只取第一张表的第一条记录。`likeConditions`、`customSql` 未实现。配置缺失时启动 NPE **已修复**：读写列名统一（`@Column.name` 优先，否则字段名）；delete 谓词改为 delete API 语法并始终限定 `_measurement`；count 累加所有表；likeConditions 用 `strings.containsStr` 实现，customSql 抛 `UnsupportedOperationException`；列名校验、值转义、时间字面量校验；缺配置时启动报明确错误 |
+| 18 | db-influx 子模块 | 原 §5 记录了 InfluxDB 访问的用法与 6 处修复 | 该子模块已下线，§5 整章、子模块表中的一行与 `api/` 中的 8 个类型（`InfluxDBConfig`、`BaseFluxRepositoryImpl`、`FluxSearchCondition` 等）已全部移除 **已删除**：需要时序库时自行引入 `influxdb-client-java` |

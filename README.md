@@ -47,7 +47,7 @@
 
 | skill | 回答的问题 | 典型触发 |
 |---|---|---|
-| [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | 框架**有什么**：工程与模块、每个模块解决什么问题、这个需求该选哪个模块、有哪些现成工具类、配置前缀是什么 | 「要发 MQ 用哪个模块」「有没有现成的对象转换工具」「easyfk 支持分库分表吗」 |
+| [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | 框架**有什么**：工程与模块、每个模块解决什么问题、这个需求该选哪个模块、有哪些现成工具类、配置前缀是什么；某个类的**精确签名**（方法重载、常量值、配置项默认值） | 「要发 MQ 用哪个模块」「有没有现成的对象转换工具」「easyfk 支持分库分表吗」「`RRBuilder` 有哪些方法」 |
 | [easyfk-dev-skill](easyfk-dev-skill/SKILL.md) | 代码**怎么写**：分层、命名、各层写法、事务与异常、架构类项目的模块拆分与线程模型、文档、自检 | 「订单模块加一个取消接口」「按 easyfk 建一个新项目」「写个 starter」 |
 | [easyfk-reverse-skill](easyfk-reverse-skill/SKILL.md) | 系统**是什么样**：从现有代码还原业务分析报告、架构分析报告，以及业务数据依赖（依赖、自管理、对外提供了哪些业务数据） | 「梳理一下这个老项目的业务流程」「补一张整体架构图」「这个项目到底依赖了哪些业务数据」 |
 
@@ -90,6 +90,7 @@ sh easyfk-skill/install.sh [<skills 目录>]
 | 「订单模块加一个取消接口，要校验状态、记日志」 | 查框架有没有现成能力 → 按分层生成 Controller / Api / Service / Repository 全套 → 自检并说明改了什么 |
 | 「这个需求改完了，帮我复核一下」 | 另起一个没参与开发的子 agent，只拿需求、设计和改动清单逐条审代码，输出阻断 / 建议清单；阻断改完复审，结果和任务状态写进计划文档 |
 | 「这里要削峰，用 MQ 还是 Disruptor？」 | 对比 `mq-*` 与 `queue-disruptor` 的持久化、可靠性差异，给出选型和配置前缀，不自己造队列 |
+| 「`RRBuilder` 有哪些方法？」「这个配置项默认值是多少？」 | 查该 easyfk 版本的 API 签名速查（按模块一份，含方法重载、常量取值、配置项默认值），不凭记忆编 API |
 | 「这个项目要同时支持 Dubbo 和 Feign 两种调用」 | 按多栈微服务形态给出契约与实现拆分方案 |
 | 「这个老项目没人维护了，帮我理清业务」 | 找出所有入口（Controller、MQ 消费、XXL-JOB、Aeron、etcd 选主……）→ 输出业务分析报告 + 架构分析报告 + 业务数据依赖清单 |
 | 「上游行情改了合约乘数，我们这边要动哪些地方？」 | 查业务数据依赖清单里行情数据的「使用方」和「变更影响」，指出要改的模块、接口和类#方法，而不是全仓库搜一遍 |
@@ -113,8 +114,8 @@ easyfk-skill/
 │   ├── SKILL.md              模块全景、需求选型、工具清单、能力边界、依赖接入
 │   ├── maintenance.md        套件自身的维护流程
 │   ├── versions/             按 easyfk 版本存放的文档快照
-│   │   └── <版本>/           VERSION.md、manuals.txt、modules/、manuals/
-│   └── scripts/              快照同步脚本
+│   │   └── <版本>/           VERSION.md、manuals.txt、modules/、api/、manuals/
+│   └── scripts/              快照同步脚本、API 文档生成脚本
 ├── easyfk-dev-skill/         开发规范
 │   ├── SKILL.md              总则、分层、命名、自检
 │   └── rules/                按层与场景拆分的 12 份规则

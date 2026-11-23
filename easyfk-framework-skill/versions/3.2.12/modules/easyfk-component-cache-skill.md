@@ -4,6 +4,7 @@
 > 坐标：`com.mcst:cache-caffeine` / `com.mcst:cache-redis`（3.2.12）
 > 依据：两个子模块全部源码；对齐 `Cache-Caffeine开发手册.md`、`Cache-Caffeine技术特点.md`、`cache-redis-开发手册.md`。
 > 以源码为准；差异见文末「复查记录」。
+> **`cache-mult`（XXL-CACHE 多级缓存）已下线**，不再收录其用法与签名；多级缓存请用 `LocalCacheManager` + `ICacheService` 自行组合。
 
 ---
 
@@ -159,3 +160,4 @@ easyfk:
 | 6 | cache-redis 手册 §3.2 / §6.4 | 配置 caches 后，未声明的缓存使用 Spring 默认行为 | 与源码一致。手册没有说明的是：Spring 默认配置是 **JDK 序列化**，并且同时失去了 `transactionAware` **已修复**：始终设置 `cacheDefaults(框架默认配置)` 与 `transactionAware`，未声明的缓存同样使用框架序列化器、全局 TTL、不缓存 null |
 | 7 | cache-redis 手册 §1.1 / §4.2 | 值使用 SmartRedisSerializer | Number、Boolean 写成字符串，读回来是 String。`@Cacheable` 返回 Long 等类型，命中缓存时调用方会 `ClassCastException`；`ICacheService.queryByKey` 也一样。（根因在 db-redis 的 `SmartRedisSerializer`，由 db-redis 负责修复，cache 模块无改动） **已修复**：db-redis 的 `SmartRedisSerializer` 把数值/布尔/字符写成带类型信封，读回原类型；旧版本写入的纯文本数值读回仍是 String |
 | 8 | cache-redis 手册 §4.3 | `getSetCountByKey(String pattern, …)` | 参数是 key，执行 SCARD，不支持模式匹配 |
+| 9 | cache-mult 子模块 | 原文档只在文首提了一句「另有 `cache-mult`，见 3.5.16 文档」 | 该子模块已下线，不再收录用法与签名；文首引用与 `api/` 中的 5 个类型（`XxlCacheConfig`、`XxlSpringCacheConfig`、`XxlCacheFactory` 等）已移除 **已删除**：需要多级缓存时用 `LocalCacheManager` + `ICacheService` 自行组合 |
