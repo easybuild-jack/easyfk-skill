@@ -27,14 +27,15 @@ easyfk-skill/
 │       ├── sync-references.ps1      新建版本快照：复制上一版 modules/、拷贝使用手册
 │       └── gen-api.py               从该版本源码生成 api/（签名、常量、配置项、自动配置类）
 ├── easyfk-dev-skill/                SKILL.md、rules/*.md
-└── easyfk-reverse-skill/            SKILL.md
+├── easyfk-reverse-skill/            SKILL.md
+└── easyfk-generator-skill/          SKILL.md（调 efg CLI 建工程，AI 不手写工程文件）
 ```
 
 ## 1. 路径规则（先做）
 
 **所有命令和文件引用一律使用绝对路径，不使用相对路径，不依赖当前工作目录。** 套件目录可能被移到任何位置，下文的 `<套件目录>`、`<源码目录>` 都要先解析成绝对路径再拼接。
 
-1. **定位套件目录**：取本文件所在目录（easyfk-framework-skill）的上一级目录，如果其中同时有 `install.ps1`、`README.md` 和 `easyfk-framework-skill`、`easyfk-dev-skill`、`easyfk-reverse-skill` 三个目录，它就是 `<套件目录>`。否则当前读到的是已安装的副本（如 `~/.cursor/skills` 下），**不要改副本**（重新安装会被覆盖），先问用户套件源目录（easyfk-skill 仓库或其工作副本）的绝对路径。
+1. **定位套件目录**：取本文件所在目录（easyfk-framework-skill）的上一级目录，如果其中同时有 `install.ps1`、`README.md` 和 `easyfk-framework-skill`、`easyfk-dev-skill`、`easyfk-reverse-skill`、`easyfk-generator-skill` 四个目录，它就是 `<套件目录>`。否则当前读到的是已安装的副本（如 `~/.cursor/skills` 下），**不要改副本**（重新安装会被覆盖），先问用户套件源目录（easyfk-skill 仓库或其工作副本）的绝对路径。
 2. **确定源码目录**：用户没给对应版本 easyfk 源码目录的绝对路径时先问，不要猜。源码目录必须正好是该版本（如该版本 git tag 的检出），根目录下应有 `easyfk-dependencies` 等工程目录。
 3. 下文路径以 `\` 书写；在 macOS / Linux 上换成 `/`。
 

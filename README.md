@@ -1,6 +1,6 @@
 # easyfk-skill
 
-**EasyFK（易架构）的 AI Skill 套件**：让 AI 在 EasyFK 项目里知道框架有什么、代码该怎么写、已有系统是怎么运转的。没有 EasyFK 的项目也能用其中与框架无关的通用规范，但能力会明显打折。
+**EasyFK（易架构）的 AI Skill 套件**：让 AI 在 EasyFK 项目里知道项目怎么建、框架有什么、代码该怎么写、已有系统是怎么运转的。没有 EasyFK 的项目也能用其中与框架无关的通用规范，但能力会明显打折。
 
 > ## 先了解 EasyFK，再决定怎么用
 >
@@ -41,23 +41,24 @@
 | 项目说不清自己是什么、碰了哪些数据，变更来了只能靠人回忆影响范围 | 项目说明开头标明定位（业务项目 / 组件项目，组件项目写清服务于谁），第 5 节给出业务数据依赖清单：依赖哪些外部数据（如行情、仓位）、自管理哪些、对外提供哪些，各自从哪来、谁在用、变了会波及哪里 |
 | 写完自己查自己，复杂改动漏了分支、少了契约同步，上线才暴露 | 复杂改动和新需求完成后，另起一个没参与开发的子 agent，只拿需求和设计逐条审代码；阻断问题改完才收，任务状态同步落到计划文档，供上层总管看进展 |
 
-## 3. 三个 skill 的分工
+## 3. 四个 skill 的分工
 
-三个 skill 平级安装、互相按名称引用，一个需求通常由其中一个主导：
+四个 skill 平级安装、互相按名称引用，一个需求通常由其中一个主导：
 
 | skill | 回答的问题 | 典型触发 |
 |---|---|---|
 | [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | 框架**有什么**：工程与模块、每个模块解决什么问题、这个需求该选哪个模块、有哪些现成工具类、配置前缀是什么；某个类的**精确签名**（方法重载、常量值、配置项默认值） | 「要发 MQ 用哪个模块」「有没有现成的对象转换工具」「easyfk 支持分库分表吗」「`RRBuilder` 有哪些方法」 |
 | [easyfk-dev-skill](easyfk-dev-skill/SKILL.md) | 代码**怎么写**：分层、命名、各层写法、事务与异常、架构类项目的模块拆分与线程模型、文档、自检 | 「订单模块加一个取消接口」「按 easyfk 建一个新项目」「写个 starter」 |
 | [easyfk-reverse-skill](easyfk-reverse-skill/SKILL.md) | 系统**是什么样**：从现有代码还原业务分析报告、架构分析报告，以及业务数据依赖（依赖、自管理、对外提供了哪些业务数据） | 「梳理一下这个老项目的业务流程」「补一张整体架构图」「这个项目到底依赖了哪些业务数据」 |
+| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | 项目**怎么建出来**：检查 JDK 与 `efg` 安装状态、没装就下载安装并验证、问清要生成的项目类型和参数、写 `generator.yml`、调 CLI 生成、核对产物 | 「用 easyfk 新建一个订单微服务」「生成项目骨架」「给已有项目加张表的 Entity 和业务代码」「表改了字段，刷一下 DTO」「efg 装不上 / 报错」 |
 
 其中 easyfk-dev-skill 有一块与框架无关（最少实现、阿里规范、文档与计划、自检与复核）。项目不用 EasyFK 时只有这部分可用，框架相关的规则全部跳过，能力会明显打折，判断方法见 §1。
 
-依赖是单向的：写代码前先查框架能力（dev → framework），反推框架调用时也要查框架（reverse → framework）。
+依赖关系是单向的：建项目先走 generator（生成器 → 框架版本），写代码前先查框架能力（dev → framework），反推框架调用时也要查框架（reverse → framework）。生成器只负责把工程和分层代码产出来，产出的代码怎么写、怎么改，仍然是 dev 说了算。
 
 ## 4. 安装
 
-支持 Cursor、Claude Code 等读取 `SKILL.md` 的 AI 编码工具。三个 skill 必须是 skills 目录**第一层**的平级目录，嵌套在 `easyfk-skill/` 子目录下通常不会被识别。
+支持 Cursor、Claude Code 等读取 `SKILL.md` 的 AI 编码工具。四个 skill 必须是 skills 目录**第一层**的平级目录，嵌套在 `easyfk-skill/` 子目录下通常不会被识别。
 
 ```bash
 git clone --depth 1 https://github.com/easybuild-jack/easyfk-skill.git
@@ -87,6 +88,9 @@ sh easyfk-skill/install.sh [<skills 目录>]
 
 | 你的需求 | 会发生什么 |
 |---|---|
+| 「用 easyfk 新建一个订单微服务，连本地 MySQL 的 order 库」 | 查 JDK 和 `efg`，没装就下载安装并验证 → 问清项目类型和参数 → 写 `generator.yml` → 调 `efg` 生成 → 核对模块和分层代码是否齐全 |
+| 「给已有项目加一张表的 Entity 和业务代码」 | 读现有配置确认坐标和包名 → 补 `db-tables` → `efg -m` 再 `efg -s`，不覆盖已手写的文件 |
+| 「表改了字段，帮忙刷新一下 DTO」 | 确认表结构 → `efg -d`，只动 DTO 和 Param |
 | 「订单模块加一个取消接口，要校验状态、记日志」 | 查框架有没有现成能力 → 按分层生成 Controller / Api / Service / Repository 全套 → 自检并说明改了什么 |
 | 「这个需求改完了，帮我复核一下」 | 另起一个没参与开发的子 agent，只拿需求、设计和改动清单逐条审代码，输出阻断 / 建议清单；阻断改完复审，结果和任务状态写进计划文档 |
 | 「这里要削峰，用 MQ 还是 Disruptor？」 | 对比 `mq-*` 与 `queue-disruptor` 的持久化、可靠性差异，给出选型和配置前缀，不自己造队列 |
@@ -119,8 +123,12 @@ easyfk-skill/
 ├── easyfk-dev-skill/         开发规范
 │   ├── SKILL.md              总则、分层、命名、自检
 │   └── rules/                按层与场景拆分的 12 份规则
-└── easyfk-reverse-skill/     从代码反推业务与架构
-    └── SKILL.md
+├── easyfk-reverse-skill/     从代码反推业务与架构
+│   └── SKILL.md
+└── easyfk-generator-skill/   用 efg CLI 创建项目
+    ├── SKILL.md              环境与安装检查、参数询问、generator.yml、生成与产物核对
+    └── reference/
+        └── cli使用手册.md     随包发布的 CLI 原版手册（完整参数、配置示例、数据库类型）
 ```
 
 ## 8. 相关链接

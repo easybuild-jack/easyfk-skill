@@ -1,6 +1,6 @@
 ﻿<#
-  安装 easyfk-skill 套件：把 easyfk-framework-skill、easyfk-dev-skill、easyfk-reverse-skill
-  复制到目标 skills 目录的第一层，并移除改名前的旧版 easyfk-skill。
+  安装 easyfk-skill 套件：把 easyfk-framework-skill、easyfk-dev-skill、easyfk-reverse-skill、
+  easyfk-generator-skill 复制到目标 skills 目录的第一层，并移除改名前的旧版 easyfk-skill。
 
   用法：
     powershell -ExecutionPolicy Bypass -File install.ps1                      # 装到 ~/.cursor/skills
@@ -11,7 +11,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$skills = @('easyfk-framework-skill', 'easyfk-dev-skill', 'easyfk-reverse-skill')
+$skills = @('easyfk-framework-skill', 'easyfk-dev-skill', 'easyfk-reverse-skill', 'easyfk-generator-skill')
 
 foreach ($name in $skills) {
     if (-not (Test-Path -LiteralPath (Join-Path $PSScriptRoot "$name\SKILL.md"))) {

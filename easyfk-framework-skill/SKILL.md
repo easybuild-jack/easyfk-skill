@@ -7,9 +7,9 @@ description: EasyFK（易架构，groupId com.mcst）Java 企业级框架的能�
 
 ## 0. 如何使用
 
-本 skill 回答三个问题：**框架有哪些能力和模块、各自解决什么问题、某个需求该用哪个模块或工具**。具体类怎么写（Controller、Service 分层写法、返回值、异常等编码规范）不在本 skill 范围内，由开发规范 skill **easyfk-dev-skill** 负责；从代码反推业务和架构由 **easyfk-reverse-skill** 负责；某个模块的详细用法读该模块的 skill 文档。
+本 skill 回答三个问题：**框架有哪些能力和模块、各自解决什么问题、某个需求该用哪个模块或工具**。具体类怎么写（Controller、Service 分层写法、返回值、异常等编码规范）不在本 skill 范围内，由开发规范 skill **easyfk-dev-skill** 负责；从代码反推业务和架构由 **easyfk-reverse-skill** 负责；新建工程、按库表生成 Entity 和分层代码由 **easyfk-generator-skill** 调 `efg` CLI 完成（AI 不手写工程文件）；某个模块的详细用法读该模块的 skill 文档。
 
-本 skill 和上面两个同属 easyfk-skill 套件（仓库 `https://github.com/easybuild-jack/easyfk-skill.git`），安装后是 skills 目录第一层的三个平级目录。要写代码或反推而另外两个没装时，按 easyfk-dev-skill 的「套件安装检查」安装；easyfk-dev-skill 也没有时，克隆上面的仓库，运行仓库根目录的 `install.ps1 -Target <skills 目录>`（Windows）或 `sh install.sh <skills 目录>`（macOS / Linux）把三个一起装上。安装失败时告诉用户，不凭记忆套编码规范。
+本 skill 和上面三个同属 easyfk-skill 套件（仓库 `https://github.com/easybuild-jack/easyfk-skill.git`），安装后是 skills 目录第一层的四个平级目录。要写代码、反推或生成工程而另外三个没装时，按 easyfk-dev-skill 的「套件安装检查」安装；easyfk-dev-skill 也没有时，克隆上面的仓库，运行仓库根目录的 `install.ps1 -Target <skills 目录>`（Windows）或 `sh install.sh <skills 目录>`（macOS / Linux）把四个一起装上。安装失败时告诉用户，不凭记忆套编码规范。
 
 本文件只写跨版本不变的内容，**不含任何具体版本号**。依赖版本、配置项、模块用法随 easyfk 版本变化，放在 `versions/<easyfk版本>/` 的快照中。
 

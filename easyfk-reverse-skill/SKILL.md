@@ -28,7 +28,7 @@ description: >-
    - easyfk-framework-skill：识别框架调用是什么。
    - easyfk-dev-skill：项目类型、文档目录、项目名取法和画图规范。
 
-   查找和安装方法见 easyfk-dev-skill 的「套件安装检查」一节；easyfk-dev-skill 本身也没装时，按下面的方式安装整个套件（三个 skill 一起装到本 skill 所在的 skills 目录，安装前在回复里说一句装到哪里）：
+   查找和安装方法见 easyfk-dev-skill 的「套件安装检查」一节；easyfk-dev-skill 本身也没装时，按下面的方式安装整个套件（四个 skill 一起装到本 skill 所在的 skills 目录，安装前在回复里说一句装到哪里）：
 
    ```
    git clone --depth 1 https://github.com/easybuild-jack/easyfk-skill.git <临时目录>/easyfk-skill

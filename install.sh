@@ -1,6 +1,6 @@
 #!/bin/sh
-# 安装 easyfk-skill 套件：把 easyfk-framework-skill、easyfk-dev-skill、easyfk-reverse-skill
-# 复制到目标 skills 目录的第一层，并移除改名前的旧版 easyfk-skill。
+# 安装 easyfk-skill 套件：把 easyfk-framework-skill、easyfk-dev-skill、easyfk-reverse-skill、
+# easyfk-generator-skill 复制到目标 skills 目录的第一层，并移除改名前的旧版 easyfk-skill。
 #
 # 用法：
 #   sh install.sh                          # 装到 ~/.cursor/skills
@@ -9,7 +9,7 @@ set -e
 
 SRC=$(cd "$(dirname "$0")" && pwd)
 TARGET=${1:-"$HOME/.cursor/skills"}
-SKILLS="easyfk-framework-skill easyfk-dev-skill easyfk-reverse-skill"
+SKILLS="easyfk-framework-skill easyfk-dev-skill easyfk-reverse-skill easyfk-generator-skill"
 
 for name in $SKILLS; do
   if [ ! -f "$SRC/$name/SKILL.md" ]; then
