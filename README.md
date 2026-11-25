@@ -74,11 +74,11 @@ The four skills are installed side by side at the same level and reference each 
 | [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | What the framework **has**: projects and modules, the problem each module solves, which module fits this requirement, which utility classes exist, what the config prefixes are; the **exact signature** of a class (method overloads, constant values, config defaults) | "Which module for sending MQ", "Is there a ready-made object-mapping utility", "Does easyfk support sharding", "What methods does `RRBuilder` have" |
 | [easyfk-dev-skill](easyfk-dev-skill/SKILL.md) | How code **should be written**: layering, naming, each layer's implementation, transactions and exceptions, module split and threading model for architecture-class projects, docs, self-check | "Add a cancel endpoint to the order module", "Create a new project on easyfk", "Write a starter" |
 | [easyfk-reverse-skill](easyfk-reverse-skill/SKILL.md) | What the system **looks like**: restore the business analysis report, the architecture analysis report and the business-data dependencies (depends on, owns, exposes) from existing code | "Map out the business flows of this legacy project", "Draw me an overall architecture diagram", "Which business data does this project actually depend on" |
-| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | How a project **gets created**: check JDK and `efg` installation, download and install if missing, verify; ask which project type and parameters; write `generator.yml`; invoke the CLI; verify the output | "Create an order microservice with easyfk", "Generate the project skeleton", "Add Entity and business code for a new table", "The table changed, refresh the DTOs", "efg won't install / throws errors" |
+| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | How a project **gets created**: EasyFK backends with `efg` (check JDK and `efg` installation, download and install if missing, verify; ask which project type and parameters; write `generator.yml`; invoke the CLI; verify the output); EasyBuild Admin admin-panel frontends with `easybuild-admin` (ask for project name, description, target directory, package manager and template version; scaffold with one `npx` command; verify `package.json` and template structure) | "Create an order microservice with easyfk", "Generate the project skeleton", "Add Entity and business code for a new table", "The table changed, refresh the DTOs", "efg won't install / throws errors", "Create an admin frontend with EasyBuild Admin" |
 
 easyfk-dev-skill has a framework-agnostic portion (minimal implementation, Alibaba guidelines, docs and plans, self-check and review). When the project does not use EasyFK, only that portion is available, all framework-related rules are skipped, and capability degrades noticeably — see §1 for how to tell.
 
-Dependencies flow one way: to create a project, run the generator first (generator → framework version); before writing code, check framework capabilities (dev → framework); when reverse-engineering framework calls, also check the framework (reverse → framework). The generator only produces the project and layered code; how that code should be written and changed is still governed by dev.
+Dependencies flow one way: to create a project, run the generator first (generator → framework version); before writing code, check framework capabilities (dev → framework); when reverse-engineering framework calls, also check the framework (reverse → framework). The generator only produces the project and layered code; how that code should be written and changed is still governed by dev. EasyBuild Admin frontends are the exception: dev's Java layering does not apply — follow the template's own `docs/开发文档.md`.
 
 ## 4. Installation
 
@@ -113,6 +113,7 @@ A few real-world requests:
 | Your request | What happens |
 |---|---|
 | "Create an order microservice with easyfk, connecting to the local MySQL `order` database" | Check JDK and `efg`; download, install and verify if missing → ask for project type and parameters → write `generator.yml` → invoke `efg` → verify modules and layered code are complete |
+| "Create an admin frontend with EasyBuild Admin" | No JDK or `efg` involved: ask for project name, description, target directory and package manager → `npx easybuild-admin@1.2.0 … --json -y` → verify `package.json` and template structure → `corepack yarn install` / `yarn dev` (port 4000, built-in mock) |
 | "Add Entity and business code for a new table in an existing project" | Read the existing configuration to confirm coordinates and package names → add to `db-tables` → run `efg -m` then `efg -s`, without overwriting hand-written files |
 | "The table changed, please refresh the DTOs" | Confirm the table structure → `efg -d`, touching only DTOs and Params |
 | "Add a cancel endpoint to the order module, with status validation and logging" | Check whether the framework already has the capability → generate the full Controller / Api / Service / Repository set by layer → self-check and explain what changed |
@@ -152,10 +153,11 @@ easyfk-skill/
 │   └── rules/                12 rule files split by layer and scenario
 ├── easyfk-reverse-skill/     Reverse-engineer business and architecture from code
 │   └── SKILL.md
-└── easyfk-generator-skill/   Create projects with the efg CLI
-    ├── SKILL.md              Environment and install checks, parameter questions, generator.yml, generation and output verification
+└── easyfk-generator-skill/   Create EasyFK backends (efg) and EasyBuild Admin frontends (easybuild-admin)
+    ├── SKILL.md              Environment checks, parameter questions, generator.yml, CLI invocation, output verification
     └── reference/
-        └── cli使用手册.md      Original CLI manual shipped with the release (full parameters, config examples, database types)
+        ├── cli使用手册.md      Original efg CLI manual (full parameters, config examples, database types)
+        └── 前端脚手架使用手册.md  Original easybuild-admin manual (parameters, JSON contract, error codes)
 ```
 
 ## 8. Related links

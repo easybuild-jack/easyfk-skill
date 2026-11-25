@@ -74,11 +74,11 @@
 | [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | 框架**有什麼**：工程與模組、每個模組解決什麼問題、這個需求該選哪個模組、有哪些現成工具類、設定前綴是什麼；某個類的**精確簽名**（方法多載、常數值、設定項預設值） | 「要發 MQ 用哪個模組」「有沒有現成的物件轉換工具」「easyfk 支援分庫分表嗎」「`RRBuilder` 有哪些方法」 |
 | [easyfk-dev-skill](easyfk-dev-skill/SKILL.md) | 程式碼**怎麼寫**：分層、命名、各層寫法、交易與例外、架構類專案的模組拆分與執行緒模型、文件、自檢 | 「訂單模組加一個取消介面」「按 easyfk 建一個新專案」「寫個 starter」 |
 | [easyfk-reverse-skill](easyfk-reverse-skill/SKILL.md) | 系統**是什麼樣**：從現有程式碼還原業務分析報告、架構分析報告，以及業務資料依賴（依賴、自管理、對外提供了哪些業務資料） | 「梳理一下這個老專案的業務流程」「補一張整體架構圖」「這個專案到底依賴了哪些業務資料」 |
-| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | 專案**怎麼建出來**：檢查 JDK 與 `efg` 安裝狀態、沒裝就下載安裝並驗證、問清要生成的專案類型和參數、寫 `generator.yml`、呼叫 CLI 生成、核對產物 | 「用 easyfk 新建一個訂單微服務」「生成專案骨架」「給既有專案加一張表的 Entity 和業務程式碼」「表改了欄位，刷新一下 DTO」「efg 裝不上 / 報錯」 |
+| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | 專案**怎麼建出來**：EasyFK 後端走 `efg`（檢查 JDK 與 `efg` 安裝狀態、沒裝就下載安裝並驗證、問清專案類型和參數、寫 `generator.yml`、呼叫 CLI 生成、核對產物）；EasyBuild Admin 中後台前端走 `easybuild-admin`（問清專案名稱、描述、輸出目錄、套件管理器、範本版本，`npx` 一條命令生成，核對 `package.json` 與範本結構） | 「用 easyfk 新建一個訂單微服務」「生成專案骨架」「給既有專案加一張表的 Entity 和業務程式碼」「表改了欄位，刷新一下 DTO」「efg 裝不上 / 報錯」「用 EasyBuild Admin 新建一個管理後台前端」 |
 
 其中 easyfk-dev-skill 有一塊與框架無關（最少實作、阿里規範、文件與計畫、自檢與複核）。專案不用 EasyFK 時只有這部分可用，框架相關的規則全部跳過，能力會明顯打折，判斷方法見 §1。
 
-依賴關係是單向的：建專案先走 generator（生成器 → 框架版本），寫程式碼前先查框架能力（dev → framework），反推框架呼叫時也要查框架（reverse → framework）。生成器只負責把工程和分層程式碼產出來，產出的程式碼怎麼寫、怎麼改，仍然是 dev 說了算。
+依賴關係是單向的：建專案先走 generator（生成器 → 框架版本），寫程式碼前先查框架能力（dev → framework），反推框架呼叫時也要查框架（reverse → framework）。生成器只負責把工程和分層程式碼產出來，產出的程式碼怎麼寫、怎麼改，仍然是 dev 說了算。前端專案是例外：dev 的 Java 分層規範不適用，寫頁面按範本自帶的 `docs/开发文档.md`。
 
 ## 4. 安裝
 
@@ -113,6 +113,7 @@ sh easyfk-skill/install.sh [<skills 目錄>]
 | 你的需求 | 會發生什麼 |
 |---|---|
 | 「用 easyfk 新建一個訂單微服務，連本機 MySQL 的 order 資料庫」 | 查 JDK 和 `efg`，沒裝就下載安裝並驗證 → 問清專案類型和參數 → 寫 `generator.yml` → 呼叫 `efg` 生成 → 核對模組和分層程式碼是否齊全 |
+| 「用 EasyBuild Admin 新建一個管理後台前端」 | 不用 JDK 與 `efg`：問清專案名稱、描述、輸出目錄、套件管理器 → `npx easybuild-admin@1.2.0 … --json -y` → 核對 `package.json` 與範本結構 → `corepack yarn install` / `yarn dev`（4000 埠，內建 Mock） |
 | 「給既有專案加一張表的 Entity 和業務程式碼」 | 讀現有設定確認座標和包名 → 補 `db-tables` → `efg -m` 再 `efg -s`，不覆蓋已手寫的檔案 |
 | 「表改了欄位，幫忙刷新一下 DTO」 | 確認表結構 → `efg -d`，只動 DTO 和 Param |
 | 「訂單模組加一個取消介面，要校驗狀態、記日誌」 | 查框架有沒有現成能力 → 按分層生成 Controller / Api / Service / Repository 全套 → 自檢並說明改了什麼 |
@@ -152,10 +153,11 @@ easyfk-skill/
 │   └── rules/                按層與情境拆分的 12 份規則
 ├── easyfk-reverse-skill/     從程式碼反推業務與架構
 │   └── SKILL.md
-└── easyfk-generator-skill/   用 efg CLI 建立專案
-    ├── SKILL.md              環境與安裝檢查、參數詢問、generator.yml、生成與產物核對
+└── easyfk-generator-skill/   建專案：後端 efg / 前端 easybuild-admin
+    ├── SKILL.md              環境檢查、參數詢問、generator.yml、呼叫 CLI、核對產物
     └── reference/
-        └── cli使用手册.md     隨套件發佈的 CLI 原版手冊（完整參數、設定範例、資料庫類型）
+        ├── cli使用手册.md       efg 原版手冊（完整參數、設定範例、資料庫類型）
+        └── 前端脚手架使用手册.md  easybuild-admin 原版手冊（參數、互動流程、JSON 契約、錯誤碼）
 ```
 
 ## 8. 相關連結

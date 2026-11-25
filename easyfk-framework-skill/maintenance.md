@@ -29,7 +29,7 @@ easyfk-skill/
 │       └── gen-api.py               从该版本源码生成 api/（签名、常量、配置项、自动配置类）
 ├── easyfk-dev-skill/                SKILL.md、rules/*.md
 ├── easyfk-reverse-skill/            SKILL.md
-└── easyfk-generator-skill/          SKILL.md（调 efg CLI 建工程，AI 不手写工程文件）
+└── easyfk-generator-skill/          SKILL.md（调 efg / easybuild-admin 建工程，AI 不手写工程文件）+ reference/（两份原版手册）
 ```
 
 ## 1. 路径规则（先做）

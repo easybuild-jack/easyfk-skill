@@ -74,11 +74,11 @@
 | [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | 框架**有什么**：工程与模块、每个模块解决什么问题、这个需求该选哪个模块、有哪些现成工具类、配置前缀是什么；某个类的**精确签名**（方法重载、常量值、配置项默认值） | 「要发 MQ 用哪个模块」「有没有现成的对象转换工具」「easyfk 支持分库分表吗」「`RRBuilder` 有哪些方法」 |
 | [easyfk-dev-skill](easyfk-dev-skill/SKILL.md) | 代码**怎么写**：分层、命名、各层写法、事务与异常、架构类项目的模块拆分与线程模型、文档、自检 | 「订单模块加一个取消接口」「按 easyfk 建一个新项目」「写个 starter」 |
 | [easyfk-reverse-skill](easyfk-reverse-skill/SKILL.md) | 系统**是什么样**：从现有代码还原业务分析报告、架构分析报告，以及业务数据依赖（依赖、自管理、对外提供了哪些业务数据） | 「梳理一下这个老项目的业务流程」「补一张整体架构图」「这个项目到底依赖了哪些业务数据」 |
-| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | 项目**怎么建出来**：检查 JDK 与 `efg` 安装状态、没装就下载安装并验证、问清要生成的项目类型和参数、写 `generator.yml`、调 CLI 生成、核对产物 | 「用 easyfk 新建一个订单微服务」「生成项目骨架」「给已有项目加张表的 Entity 和业务代码」「表改了字段，刷一下 DTO」「efg 装不上 / 报错」 |
+| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | 项目**怎么建出来**：EasyFK 后端走 `efg`（检查 JDK 与 `efg` 安装状态、没装就下载安装并验证、问清项目类型和参数、写 `generator.yml`、调 CLI 生成、核对产物）；EasyBuild Admin 中后台前端走 `easybuild-admin`（问清项目名、描述、输出目录、包管理器、模板版本，`npx` 一条命令生成，核对 `package.json` 与模板结构） | 「用 easyfk 新建一个订单微服务」「生成项目骨架」「给已有项目加张表的 Entity 和业务代码」「表改了字段，刷一下 DTO」「efg 装不上 / 报错」「用 EasyBuild Admin 新建一个管理后台前端」 |
 
 其中 easyfk-dev-skill 有一块与框架无关（最少实现、阿里规范、文档与计划、自检与复核）。项目不用 EasyFK 时只有这部分可用，框架相关的规则全部跳过，能力会明显打折，判断方法见 §1。
 
-依赖关系是单向的：建项目先走 generator（生成器 → 框架版本），写代码前先查框架能力（dev → framework），反推框架调用时也要查框架（reverse → framework）。生成器只负责把工程和分层代码产出来，产出的代码怎么写、怎么改，仍然是 dev 说了算。
+依赖关系是单向的：建项目先走 generator（生成器 → 框架版本），写代码前先查框架能力（dev → framework），反推框架调用时也要查框架（reverse → framework）。生成器只负责把工程和分层代码产出来，产出的代码怎么写、怎么改，仍然是 dev 说了算。前端项目是例外：dev 的 Java 分层规范不适用，写页面按模板自带的 `docs/开发文档.md`。
 
 ## 4. 安装
 
@@ -113,6 +113,7 @@ sh easyfk-skill/install.sh [<skills 目录>]
 | 你的需求 | 会发生什么 |
 |---|---|
 | 「用 easyfk 新建一个订单微服务，连本地 MySQL 的 order 库」 | 查 JDK 和 `efg`，没装就下载安装并验证 → 问清项目类型和参数 → 写 `generator.yml` → 调 `efg` 生成 → 核对模块和分层代码是否齐全 |
+| 「用 EasyBuild Admin 新建一个管理后台前端」 | 不用 JDK 与 `efg`：问清项目名、描述、输出目录、包管理器 → `npx easybuild-admin@1.2.0 … --json -y` → 核对 `package.json` 与模板结构 → `corepack yarn install` / `yarn dev`（4000 端口，内置 Mock） |
 | 「给已有项目加一张表的 Entity 和业务代码」 | 读现有配置确认坐标和包名 → 补 `db-tables` → `efg -m` 再 `efg -s`，不覆盖已手写的文件 |
 | 「表改了字段，帮忙刷新一下 DTO」 | 确认表结构 → `efg -d`，只动 DTO 和 Param |
 | 「订单模块加一个取消接口，要校验状态、记日志」 | 查框架有没有现成能力 → 按分层生成 Controller / Api / Service / Repository 全套 → 自检并说明改了什么 |
@@ -152,10 +153,11 @@ easyfk-skill/
 │   └── rules/                按层与场景拆分的 12 份规则
 ├── easyfk-reverse-skill/     从代码反推业务与架构
 │   └── SKILL.md
-└── easyfk-generator-skill/   用 efg CLI 创建项目
-    ├── SKILL.md              环境与安装检查、参数询问、generator.yml、生成与产物核对
+└── easyfk-generator-skill/   建项目：后端 efg / 前端 easybuild-admin
+    ├── SKILL.md              环境检查、参数询问、generator.yml、调 CLI、核对产物
     └── reference/
-        └── cli使用手册.md     随包发布的 CLI 原版手册（完整参数、配置示例、数据库类型）
+        ├── cli使用手册.md       efg 原版手册（完整参数、配置示例、数据库类型）
+        └── 前端脚手架使用手册.md  easybuild-admin 原版手册（参数、交互流程、JSON 契约、错误码）
 ```
 
 ## 8. 相关链接
