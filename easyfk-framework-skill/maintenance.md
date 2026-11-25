@@ -2,7 +2,7 @@
 
 > **读者**：本套件的作者本人。维护指的是让 skill 跟上 easyfk 框架的演进——升级到新版本、对齐某个模块的改动，需要 easyfk 源码和框架内部知识，只有作者能做。
 >
-> **使用方不需要看本文**。业务项目的开发者接入或更新 skill，只要重新克隆仓库跑一次 `install.ps1` / `install.sh`，方法见根目录 [README](../README.md)。
+> **使用方不需要看本文**。业务项目的开发者接入或更新 skill，只要重新克隆仓库跑一次 `install.ps1` / `install.sh`，方法见根目录 [README](../README.zh-CN.md)。
 
 作者要求维护本套件时按本文执行，例如：
 
@@ -16,7 +16,8 @@
 
 ```
 easyfk-skill/
-├── README.md                        使用方看的介绍：能力、安装、用法（不写维护方法）
+├── README.md                        使用方看的介绍（英文，GitHub 默认展示）：能力、安装、用法（不写维护方法）
+├── README.zh-CN.md / .zh-TW.md / .ja.md  同一份介绍的简体 / 繁体 / 日文版，改 README 时这几份一起同步
 ├── install.ps1 / install.sh         安装脚本，新增或改名 skill 时同步修改
 ├── easyfk-framework-skill/
 │   ├── SKILL.md                     跨版本不变的能力地图（§2、§4、§5、§6、§7 随模块增减更新）

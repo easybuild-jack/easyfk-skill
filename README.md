@@ -1,64 +1,88 @@
-# easyfk-skill
+<h1 align="center">easyfk-skill</h1>
 
-**EasyFK（易架构）的 AI Skill 套件**：让 AI 在 EasyFK 项目里知道项目怎么建、框架有什么、代码该怎么写、已有系统是怎么运转的。没有 EasyFK 的项目也能用其中与框架无关的通用规范，但能力会明显打折。
+<p align="center">
+  <b>AI Skill suite for EasyFK: scaffold projects, explore the framework, write code, reverse-engineer systems</b>
+</p>
 
-> ## 先了解 EasyFK，再决定怎么用
->
-> 这套 skill 是 [EasyFK 架构](https://www.easybuild.pro/easyfk) 的配套说明书。它讲的模块坐标、分层写法、配置前缀、类名注解，全部来自 easyfk 框架本身，不是通用的 Spring 经验。
->
-> - **项目用了 EasyFK**：全部能力可用。上手前请先读官网，了解这套架构是什么、有哪些模块：**<https://www.easybuild.pro/easyfk>**
-> - **项目没用 EasyFK**：也能用，但只用与框架无关的那部分——写能工作的最少实现、阿里开发规范、文档与计划、自检与复核。所有 easyfk 相关的内容（模块选型、`easyfk-` 坐标与私服、框架类名注解和配置前缀、按 BOM 版本路由、反推里对框架的解读）一律不参考、不套用。
->
-> **先说清楚**：不用 EasyFK 时能力会大打折扣。这套 skill 最值钱的是框架能力地图和按版本给的确切类名与配置，去掉这块，剩下的是一套通用开发规范——有用，但换个通用 coding skill 也能给到。
+<p align="center">
+  <a href="README.zh-CN.md">简体中文</a> · <b>English</b> · <a href="README.zh-TW.md">繁體中文</a> · <a href="README.ja.md">日本語</a>
+</p>
+
+<p align="center">
+  <a href="#3-division-of-labour-across-the-four-skills"><img alt="skills" src="https://img.shields.io/badge/skills-4-2ea44f?style=flat-square"></a>
+  <a href="#4-installation"><img alt="agents" src="https://img.shields.io/badge/agents-Cursor%20%7C%20Claude%20Code-blue?style=flat-square"></a>
+  <a href="https://www.easybuild.pro/easyfk"><img alt="easyfk" src="https://img.shields.io/badge/easyfk-3.2.12%20%7C%203.5.16-orange?style=flat-square"></a>
+  <a href="https://github.com/easybuild-jack/easyfk-skill"><img alt="GitHub stars" src="https://img.shields.io/github/stars/easybuild-jack/easyfk-skill?style=flat-square&logo=github"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.easybuild.pro/easyfk">Website</a> ·
+  <a href="https://www.easybuild.pro/docs/reader/dev-env">Docs</a> ·
+  <a href="#4-installation">Install</a> ·
+  <a href="#5-how-to-use-it">Usage</a>
+</p>
 
 ---
 
-## 1. 它和 EasyFK 是什么关系
+It tells AI how a project is built, what the framework provides, how code should be written, and how an existing system actually runs inside an EasyFK project. Projects without EasyFK can still use the framework-agnostic conventions in this suite, but with a noticeable drop in capability.
 
-[EasyFK（易架构）](https://www.easybuild.pro/easyfk) 是企业级的 Java 技术底座，定位是「一次建设，全局复用」：12 个核心模块、40+ 可插拔组件、统一依赖治理，把所有项目都要重复搭的基础设施（统一返回体、异常、日志、鉴权、ORM、缓存、MQ、线程池……）做成标准化组件，业务项目按需引入即可开工。
+> ## Understand EasyFK before deciding how to use this
+>
+> This suite is the companion manual for [EasyFK](https://www.easybuild.pro/easyfk). The module coordinates, layering conventions, config prefixes, class names and annotations described here all come from the framework itself — not from generic Spring experience.
+>
+> - **The project uses EasyFK**: every capability is available. Read the official site first to understand what this architecture is and which modules it has: **<https://www.easybuild.pro/easyfk>**
+> - **The project does not use EasyFK**: still usable, but only the framework-agnostic part — minimal working implementations, Alibaba coding guidelines, docs and plans, self-check and review. Anything EasyFK-specific (module selection, `easyfk-` coordinates and private repository, framework class names, annotations and config prefixes, BOM version routing, framework interpretation during reverse analysis) is ignored and not applied.
+>
+> **To be clear**: without EasyFK the capability drops sharply. The most valuable part of this suite is the framework capability map and the exact class names and configuration per version. Remove that, and what remains is a general coding convention — useful, but any generic coding skill can provide the same.
 
-配套的 AI skill 与这套架构绑得很紧，有三个原因：
+---
 
-| 原因 | 说明 |
+## 1. How it relates to EasyFK
+
+[EasyFK](https://www.easybuild.pro/easyfk) is an enterprise-grade Java foundation with the positioning of "build once, reuse everywhere": 12 core modules, 40+ pluggable components, unified dependency governance. It turns the infrastructure every project has to rebuild (unified response envelope, exceptions, logging, authentication, ORM, cache, MQ, thread pools…) into standardized components that business projects can pull in and start working with.
+
+The companion AI skill is tightly bound to that architecture for three reasons:
+
+| Reason | Explanation |
 |---|---|
-| **框架闭源，能力只存在于框架里** | `com.mcst:*` 的 jar 只发布在私有 Maven 仓库。模块有哪些、类叫什么、注解怎么写、配置前缀是什么，AI 靠通用知识猜不出来，猜错就是编译不过 |
-| **编码规范由框架的分层决定** | `Controller → IXxxApi → Service → Repository → Mapper` 这一套（以及 `ApiServerImpl / ApiScImpl / ApiDubboImpl` 的多栈实现）是 EasyFK 的约定，不是普通 Spring 项目的写法 |
-| **框架在演进** | 不同 easyfk 版本的类名、配置项、模块增减都不一样。skill 按项目实际依赖的 BOM 版本加载对应快照，写出来的才是这个版本真正能跑的代码 |
+| **The framework is closed source; capabilities live only inside it** | `com.mcst:*` jars are published only to a private Maven repository. Which modules exist, what the classes are called, how annotations are written, what the config prefixes are — AI cannot infer these from general knowledge, and a wrong guess means code that does not compile |
+| **Coding conventions are dictated by the framework's layering** | `Controller → IXxxApi → Service → Repository → Mapper` (together with the multi-stack `ApiServerImpl / ApiScImpl / ApiDubboImpl` implementations) is an EasyFK convention, not how an ordinary Spring project is written |
+| **The framework keeps evolving** | Class names, configuration keys and module sets differ between easyfk versions. The skill loads the snapshot matching the BOM version the project actually depends on, so what gets written is what really runs on that version |
 
-所以判断分两层：
+So the judgement has two levels:
 
-- **有 `easyfk-` 坐标或 `com.mcst` 包名** → 按本套件全部规则走。
-- **没有** → 只保留与框架无关的通用规范：最少实现、阿里规范、日志注释、文档与计划、自检与复核、项目说明里的定位与业务数据依赖。涉及 easyfk 的模块选型、坐标与私服、类名注解、配置前缀、版本路由一律跳过，也不拿框架写法往普通 Spring 项目上套。这时它能帮的有限，能力明显打折——本来就不打算用 EasyFK 的话，通用 coding skill 是更合适的选择。
+- **Has `easyfk-` coordinates or `com.mcst` package names** → follow the full rule set of this suite.
+- **Does not** → keep only the framework-agnostic conventions: minimal implementation, Alibaba guidelines, logging and comments, docs and plans, self-check and review, project positioning and business-data dependencies in the project description. Anything EasyFK-related — module selection, coordinates and private repository, class names and annotations, config prefixes, version routing — is skipped, and framework idioms are not forced onto an ordinary Spring project. The help it can offer here is limited and degrades noticeably; if you never intended to use EasyFK, a generic coding skill is the better choice.
 
-## 2. 它解决什么问题
+## 2. What problem it solves
 
-| 没有 skill 时 | 有 skill 时 |
+| Without the skill | With the skill |
 |---|---|
-| AI 不知道框架已经提供了 `Result`、线程池、缓存、锁、业务编号，于是自己写一份，或者随手引入 Guava、commons-lang3 等重复能力 | 先查框架能力地图，有现成模块就按模块文档的类名和配置写，缺什么才补什么 |
-| 分层靠猜：Controller 直接注入 Service、跨服务调用不走契约、事务和唯一性校验漏掉 | 按规范逐层写：主键 `String` + UUID、`@Transactional`、`@SingleUniqueField`、契约四件套一次补齐，写完自检 |
-| 框架升级后 AI 还在用旧版本的类名和配置前缀 | 从 BOM 读出项目版本，路由到该版本的文档快照，写的就是这个版本的 API |
-| 接手一个没人维护的老项目，读代码如读天书 | 从入口反推出两份报告：业务分析报告 + 架构分析报告，含流程图、时序图、高可用方案 |
-| 项目说不清自己是什么、碰了哪些数据，变更来了只能靠人回忆影响范围 | 项目说明开头标明定位（业务项目 / 组件项目，组件项目写清服务于谁），第 5 节给出业务数据依赖清单：依赖哪些外部数据（如行情、仓位）、自管理哪些、对外提供哪些，各自从哪来、谁在用、变了会波及哪里 |
-| 写完自己查自己，复杂改动漏了分支、少了契约同步，上线才暴露 | 复杂改动和新需求完成后，另起一个没参与开发的子 agent，只拿需求和设计逐条审代码；阻断问题改完才收，任务状态同步落到计划文档，供上层总管看进展 |
+| AI does not know the framework already ships `Result`, thread pools, cache, locks and business-number generation, so it writes its own or casually pulls in Guava, commons-lang3 and other duplicate capabilities | Check the framework capability map first; if a module exists, write against the class names and configuration in that module's docs, and only fill the gaps yourself |
+| Layering is guesswork: Controller injects Service directly, cross-service calls bypass the contract, transactions and uniqueness checks get missed | Write layer by layer: `String` primary key with UUID, `@Transactional`, `@SingleUniqueField`, the full four-piece contract set at once, then self-check |
+| After a framework upgrade, AI still uses old class names and config prefixes | Read the project version from the BOM, route to that version's doc snapshot, and write against that version's API |
+| Taking over an unmaintained legacy project feels like reading a foreign language | Reverse-engineer two reports from the entry points: a business analysis report and an architecture analysis report, including flowcharts, sequence diagrams and high-availability design |
+| The project cannot state what it is or which data it touches, so change impact is left to human memory | The project description opens with its positioning (business project / component project; component projects must name who they serve), and section 5 lists business-data dependencies: which external data it relies on, which it owns, which it exposes, where each comes from, who consumes it, and what breaks if it changes |
+| You review your own work: complex changes miss branches or skip contract sync, and problems surface only in production | After complex changes and new features, spin up a separate sub-agent that did not take part in development and have it review the code against the requirements and design, item by item; blocking issues must be fixed before finishing, and task status is written into the plan document for the supervising layer |
 
-## 3. 四个 skill 的分工
+## 3. Division of labour across the four skills
 
-四个 skill 平级安装、互相按名称引用，一个需求通常由其中一个主导：
+The four skills are installed side by side at the same level and reference each other by name. A requirement is usually led by one of them:
 
-| skill | 回答的问题 | 典型触发 |
+| Skill | The question it answers | Typical triggers |
 |---|---|---|
-| [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | 框架**有什么**：工程与模块、每个模块解决什么问题、这个需求该选哪个模块、有哪些现成工具类、配置前缀是什么；某个类的**精确签名**（方法重载、常量值、配置项默认值） | 「要发 MQ 用哪个模块」「有没有现成的对象转换工具」「easyfk 支持分库分表吗」「`RRBuilder` 有哪些方法」 |
-| [easyfk-dev-skill](easyfk-dev-skill/SKILL.md) | 代码**怎么写**：分层、命名、各层写法、事务与异常、架构类项目的模块拆分与线程模型、文档、自检 | 「订单模块加一个取消接口」「按 easyfk 建一个新项目」「写个 starter」 |
-| [easyfk-reverse-skill](easyfk-reverse-skill/SKILL.md) | 系统**是什么样**：从现有代码还原业务分析报告、架构分析报告，以及业务数据依赖（依赖、自管理、对外提供了哪些业务数据） | 「梳理一下这个老项目的业务流程」「补一张整体架构图」「这个项目到底依赖了哪些业务数据」 |
-| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | 项目**怎么建出来**：检查 JDK 与 `efg` 安装状态、没装就下载安装并验证、问清要生成的项目类型和参数、写 `generator.yml`、调 CLI 生成、核对产物 | 「用 easyfk 新建一个订单微服务」「生成项目骨架」「给已有项目加张表的 Entity 和业务代码」「表改了字段，刷一下 DTO」「efg 装不上 / 报错」 |
+| [easyfk-framework-skill](easyfk-framework-skill/SKILL.md) | What the framework **has**: projects and modules, the problem each module solves, which module fits this requirement, which utility classes exist, what the config prefixes are; the **exact signature** of a class (method overloads, constant values, config defaults) | "Which module for sending MQ", "Is there a ready-made object-mapping utility", "Does easyfk support sharding", "What methods does `RRBuilder` have" |
+| [easyfk-dev-skill](easyfk-dev-skill/SKILL.md) | How code **should be written**: layering, naming, each layer's implementation, transactions and exceptions, module split and threading model for architecture-class projects, docs, self-check | "Add a cancel endpoint to the order module", "Create a new project on easyfk", "Write a starter" |
+| [easyfk-reverse-skill](easyfk-reverse-skill/SKILL.md) | What the system **looks like**: restore the business analysis report, the architecture analysis report and the business-data dependencies (depends on, owns, exposes) from existing code | "Map out the business flows of this legacy project", "Draw me an overall architecture diagram", "Which business data does this project actually depend on" |
+| [easyfk-generator-skill](easyfk-generator-skill/SKILL.md) | How a project **gets created**: check JDK and `efg` installation, download and install if missing, verify; ask which project type and parameters; write `generator.yml`; invoke the CLI; verify the output | "Create an order microservice with easyfk", "Generate the project skeleton", "Add Entity and business code for a new table", "The table changed, refresh the DTOs", "efg won't install / throws errors" |
 
-其中 easyfk-dev-skill 有一块与框架无关（最少实现、阿里规范、文档与计划、自检与复核）。项目不用 EasyFK 时只有这部分可用，框架相关的规则全部跳过，能力会明显打折，判断方法见 §1。
+easyfk-dev-skill has a framework-agnostic portion (minimal implementation, Alibaba guidelines, docs and plans, self-check and review). When the project does not use EasyFK, only that portion is available, all framework-related rules are skipped, and capability degrades noticeably — see §1 for how to tell.
 
-依赖关系是单向的：建项目先走 generator（生成器 → 框架版本），写代码前先查框架能力（dev → framework），反推框架调用时也要查框架（reverse → framework）。生成器只负责把工程和分层代码产出来，产出的代码怎么写、怎么改，仍然是 dev 说了算。
+Dependencies flow one way: to create a project, run the generator first (generator → framework version); before writing code, check framework capabilities (dev → framework); when reverse-engineering framework calls, also check the framework (reverse → framework). The generator only produces the project and layered code; how that code should be written and changed is still governed by dev.
 
-## 4. 安装
+## 4. Installation
 
-支持 Cursor、Claude Code 等读取 `SKILL.md` 的 AI 编码工具。四个 skill 必须是 skills 目录**第一层**的平级目录，嵌套在 `easyfk-skill/` 子目录下通常不会被识别。
+Supports Cursor, Claude Code and other AI coding tools that read `SKILL.md`. The four skills must sit as sibling directories at the **first level** of the skills directory; nesting them under an `easyfk-skill/` subdirectory usually means they are not detected.
 
 ```bash
 git clone --depth 1 https://github.com/easybuild-jack/easyfk-skill.git
@@ -66,73 +90,85 @@ git clone --depth 1 https://github.com/easybuild-jack/easyfk-skill.git
 
 ```powershell
 # Windows
-powershell -ExecutionPolicy Bypass -File easyfk-skill/install.ps1 [-Target <skills 目录>]
+powershell -ExecutionPolicy Bypass -File easyfk-skill/install.ps1 [-Target <skills directory>]
 ```
 
 ```bash
 # macOS / Linux
-sh easyfk-skill/install.sh [<skills 目录>]
+sh easyfk-skill/install.sh [<skills directory>]
 ```
 
-- 目标目录默认 `~/.cursor/skills`（个人全局）；只给某个项目装用 `<项目>/.cursor/skills`；Claude Code 用 `~/.claude/skills`。
-- 已有的同名目录会先删再装；发现改名前的旧版 `easyfk-skill`（`name: easyfk-skill`）会一并移除。
-- 装完重启 IDE 或新开会话生效。**更新**：重新克隆再跑一次安装脚本即可。
+- The target directory defaults to `~/.cursor/skills` (per-user, global). To install for a single project use `<project>/.cursor/skills`; for Claude Code use `~/.claude/skills`.
+- An existing directory with the same name is deleted first and then installed. The pre-rename legacy `easyfk-skill` directory (`name: easyfk-skill`) is removed as well.
+- Restart the IDE or open a new session after installing. **To update**: clone again and rerun the install script.
 
-## 5. 怎么用
+## 5. How to use it
 
-**不需要手动指定 skill。** 在 EasyFK 项目里正常提需求，AI 会先从构建文件（`easyfk-` 坐标）或源码包名（`com.mcst`）认出这是 EasyFK 项目，再按 BOM 版本加载对应文档。
+**No need to name a skill manually.** In an EasyFK project, just state your requirement as usual. The AI first recognises it as an EasyFK project from the build file (`easyfk-` coordinates) or the source package name (`com.mcst`), then loads the docs for the BOM version in use.
 
-不是 EasyFK 项目时，它不会套用框架那套写法，只用通用规范（最少实现、文档与计划、自检与复核），并主动告诉你能力打了折。普通 Java 项目不会被塞进 `IXxxApi`、`easyfk-` 坐标这些框架约定。
+For non-EasyFK projects it will not apply the framework idioms; it uses only the general conventions (minimal implementation, docs and plans, self-check and review) and tells you up front that capability is reduced. Ordinary Java projects are not pushed into framework conventions such as `IXxxApi` or `easyfk-` coordinates.
 
-几个实际的说法：
+A few real-world requests:
 
-| 你的需求 | 会发生什么 |
+| Your request | What happens |
 |---|---|
-| 「用 easyfk 新建一个订单微服务，连本地 MySQL 的 order 库」 | 查 JDK 和 `efg`，没装就下载安装并验证 → 问清项目类型和参数 → 写 `generator.yml` → 调 `efg` 生成 → 核对模块和分层代码是否齐全 |
-| 「给已有项目加一张表的 Entity 和业务代码」 | 读现有配置确认坐标和包名 → 补 `db-tables` → `efg -m` 再 `efg -s`，不覆盖已手写的文件 |
-| 「表改了字段，帮忙刷新一下 DTO」 | 确认表结构 → `efg -d`，只动 DTO 和 Param |
-| 「订单模块加一个取消接口，要校验状态、记日志」 | 查框架有没有现成能力 → 按分层生成 Controller / Api / Service / Repository 全套 → 自检并说明改了什么 |
-| 「这个需求改完了，帮我复核一下」 | 另起一个没参与开发的子 agent，只拿需求、设计和改动清单逐条审代码，输出阻断 / 建议清单；阻断改完复审，结果和任务状态写进计划文档 |
-| 「这里要削峰，用 MQ 还是 Disruptor？」 | 对比 `mq-*` 与 `queue-disruptor` 的持久化、可靠性差异，给出选型和配置前缀，不自己造队列 |
-| 「`RRBuilder` 有哪些方法？」「这个配置项默认值是多少？」 | 查该 easyfk 版本的 API 签名速查（按模块一份，含方法重载、常量取值、配置项默认值），不凭记忆编 API |
-| 「这个项目要同时支持 Dubbo 和 Feign 两种调用」 | 按多栈微服务形态给出契约与实现拆分方案 |
-| 「这个老项目没人维护了，帮我理清业务」 | 找出所有入口（Controller、MQ 消费、XXL-JOB、Aeron、etcd 选主……）→ 输出业务分析报告 + 架构分析报告 + 业务数据依赖清单 |
-| 「上游行情改了合约乘数，我们这边要动哪些地方？」 | 查业务数据依赖清单里行情数据的「使用方」和「变更影响」，指出要改的模块、接口和类#方法，而不是全仓库搜一遍 |
-| 「升级到新版 easyfk，哪些写法要改」 | 对比两版快照，列出改名的配置项、变化的类名，保留旧写法并注明「从哪个版本起改为」 |
+| "Create an order microservice with easyfk, connecting to the local MySQL `order` database" | Check JDK and `efg`; download, install and verify if missing → ask for project type and parameters → write `generator.yml` → invoke `efg` → verify modules and layered code are complete |
+| "Add Entity and business code for a new table in an existing project" | Read the existing configuration to confirm coordinates and package names → add to `db-tables` → run `efg -m` then `efg -s`, without overwriting hand-written files |
+| "The table changed, please refresh the DTOs" | Confirm the table structure → `efg -d`, touching only DTOs and Params |
+| "Add a cancel endpoint to the order module, with status validation and logging" | Check whether the framework already has the capability → generate the full Controller / Api / Service / Repository set by layer → self-check and explain what changed |
+| "I'm done with this requirement, please review it" | Spin up a separate sub-agent that did not take part in development; it reviews the code against requirements, design and change list, and reports blocking / suggested items; blocking items are fixed and re-reviewed, and the result plus task status go into the plan document |
+| "I need traffic shaping here — MQ or Disruptor?" | Compare `mq-*` and `queue-disruptor` on persistence and reliability, give the selection and config prefixes; do not hand-roll a queue |
+| "What methods does `RRBuilder` have?" "What is the default for this config key?" | Consult the API signature reference for that easyfk version (one per module, with overloads, constant values and config defaults); never invent an API from memory |
+| "This project must support both Dubbo and Feign calls" | Propose a contract and implementation split for the multi-stack microservice form |
+| "Nobody maintains this legacy project any more; help me make sense of it" | Find every entry point (Controller, MQ consumer, XXL-JOB, Aeron, etcd leader election…) → produce a business analysis report + architecture analysis report + business-data dependency list |
+| "Upstream changed the contract multiplier for market data — what do we need to change?" | Consult the "consumers" and "change impact" of market data in the business-data dependency list, and point to the affected modules, endpoints and `Class#method` instead of searching the whole repository |
+| "Upgrading to a new easyfk release — what has to change?" | Diff the two snapshots, list renamed config keys and changed class names, keep the old form with a note "changed from version X" |
 
-## 6. 框架依赖
+## 6. Framework dependency
 
-easyfk **不开源**，但可免费使用。框架的 jar 不发布在 Maven Central 等公共仓库，需要通过官方私有的 Maven 仓库获取。
+easyfk is **not open source**, but it is free to use. The framework jars are not published to Maven Central or other public repositories; they are obtained from the official private Maven repository.
 
-仓库地址、访问令牌，以及 Maven / Gradle 的具体配置方法，见官网：<https://www.easybuild.pro/easyfk>
+Repository URL, access token, and the concrete Maven / Gradle configuration are documented on the official site: <https://www.easybuild.pro/easyfk>
 
-这一步是前提：没有配好仓库，`com.mcst:*` 的依赖会一律解析失败（找不到构件或 401）。
+This step is a prerequisite: without the repository configured, every `com.mcst:*` dependency fails to resolve (artifact not found or 401).
 
-## 7. 目录结构
+## 7. Directory structure
 
 ```
 easyfk-skill/
-├── README.md                 本文件
-├── install.ps1 / install.sh  安装脚本
-├── easyfk-framework-skill/   框架能力地图 + 版本快照
-│   ├── SKILL.md              模块全景、需求选型、工具清单、能力边界、依赖接入
-│   ├── maintenance.md        套件自身的维护流程
-│   ├── versions/             按 easyfk 版本存放的文档快照
-│   │   └── <版本>/           VERSION.md、manuals.txt、modules/、api/、manuals/
-│   └── scripts/              快照同步脚本、API 文档生成脚本
-├── easyfk-dev-skill/         开发规范
-│   ├── SKILL.md              总则、分层、命名、自检
-│   └── rules/                按层与场景拆分的 12 份规则
-├── easyfk-reverse-skill/     从代码反推业务与架构
+├── README.md                 English (default)
+├── README.zh-CN.md           Simplified Chinese
+├── README.zh-TW.md           Traditional Chinese
+├── README.ja.md              Japanese
+├── install.ps1 / install.sh  Install scripts
+├── easyfk-framework-skill/   Framework capability map + version snapshots
+│   ├── SKILL.md              Module overview, requirement-based selection, utility list, capability boundaries, dependency setup
+│   ├── maintenance.md        Maintenance workflow of the suite itself
+│   ├── versions/             Doc snapshots stored per easyfk version
+│   │   └── <version>/        VERSION.md, manuals.txt, modules/, api/, manuals/
+│   └── scripts/              Snapshot sync scripts, API doc generation scripts
+├── easyfk-dev-skill/         Development conventions
+│   ├── SKILL.md              General rules, layering, naming, self-check
+│   └── rules/                12 rule files split by layer and scenario
+├── easyfk-reverse-skill/     Reverse-engineer business and architecture from code
 │   └── SKILL.md
-└── easyfk-generator-skill/   用 efg CLI 创建项目
-    ├── SKILL.md              环境与安装检查、参数询问、generator.yml、生成与产物核对
+└── easyfk-generator-skill/   Create projects with the efg CLI
+    ├── SKILL.md              Environment and install checks, parameter questions, generator.yml, generation and output verification
     └── reference/
-        └── cli使用手册.md     随包发布的 CLI 原版手册（完整参数、配置示例、数据库类型）
+        └── cli使用手册.md      Original CLI manual shipped with the release (full parameters, config examples, database types)
 ```
 
-## 8. 相关链接
+## 8. Related links
 
-- EasyFK 架构介绍：<https://www.easybuild.pro/easyfk>
-- EasyFK 文档（开发环境、快速开始）：<https://www.easybuild.pro/docs/reader/dev-env>
-- 本仓库：<https://github.com/easybuild-jack/easyfk-skill.git>
+- EasyFK architecture overview: <https://www.easybuild.pro/easyfk>
+- EasyFK docs (dev environment, quick start): <https://www.easybuild.pro/docs/reader/dev-env>
+- This repository: <https://github.com/easybuild-jack/easyfk-skill.git>
+
+## 9. Contributing
+
+Issues and pull requests are welcome: reporting documentation mistakes, adding snapshots for a new easyfk release, or improving the rules.
+
+- Read the suite maintenance workflow in [easyfk-framework-skill/maintenance.md](easyfk-framework-skill/maintenance.md) before changing skill content. Adding or refreshing a doc snapshot for an easyfk version needs that version's framework source, which only the maintainer can do.
+- When changing this README, update all four language versions (`README.md`, `README.zh-CN.md`, `README.zh-TW.md`, `README.ja.md`) together and keep sections and table rows aligned.
+- Before submitting, run `install.sh` / `install.ps1` locally to confirm the four skills install correctly at the first level of the skills directory.
+- Content in either Chinese or English is fine.
