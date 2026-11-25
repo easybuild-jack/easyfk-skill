@@ -1,10 +1,9 @@
 ---
 name: easyfk-dev-skill
 description: >-
-  EasyFK（易架构）项目的开发规范：告诉 AI 在 easyfk 项目里怎样规范地写业务代码。要用任何能力时先查 easyfk-framework-skill 有没有现成模块，能满足就用；写能工作的最少实现（YAGNI、先复用、修 bug 改根因），遵守阿里开发规范，日志和注释用中文。
-  普通数据库业务项目按分层写：模型（Dto/Param/Req/EditReq/Resp）→ 持久层（Entity/Mapper/Repository，MyBatis-Plus，String UUID 主键）→ Service → Api / ApiServerImpl → Controller → Remote（Cloud / Dubbo），异常默认用错误码枚举、多语言时用 i18n；已有项目先读现有结构和同类代码照写，从零开发时先交给 easyfk-generator-skill 用 efg 生成工程和分层代码（AI 不手写工程文件），再回来按规范写业务。架构类项目（为业务开发服务、偏架构层的组件、SDK、starter、中间件、引擎、框架底层，不是普通数据库应用）按 rules/11-architecture.md 定模块拆分、包结构、线程模型与状态、热路径与 GC、确定性、对外契约兼容、自动配置和依赖版本，要给别人接入的必须写使用说明文档。
-  文档按改动大小决定：小改动和 bug 修复不新建文档；重大调整先写需求、分析、计划，放 docs/requirement、docs/design、docs/plan；流程图、时序图、架构图按需用 Mermaid 画；项目级迭代记录按时间倒序。项目根目录先写 README.md 作概览大纲（定位、功能大纲、技术栈、快速开始、文档索引），只写结论和索引，详细内容放项目说明。项目说明文档（docs/<项目名>项目说明.md）开头先写明项目定位：业务项目（直接实现业务规则、业务方会直接对它提需求，如用户、订单、风控）还是组件项目（本身不处理业务，为业务项目提供通用能力或数据流转，如 data-agent、aeron-cluster、mq-kafka、db-redis），组件项目必须写清服务对象；正文固定五节：背景、需求、功能、模块设计及划分、业务数据依赖，业务数据依赖列清本项目依赖、自管理、对外提供了哪些业务数据（如行情数据、仓位数据）及各自的来源、代码位置和变更影响。定位和依赖清单只如实登记事实，一次需求变更涉及哪些项目由上层总管 skill 分派，本项目收到任务后再核是否属于自己的职责、要不要改、改哪些。新需求开发和复杂变更做完，要另起一个没参与开发的独立子 agent，拿需求和设计复核代码，小 bug 修复不做；复核后按 plan 文档顶部固定的状态值更新任务状态，供上层总管查看进展。写完先自检。
-  识别到 easyfk 项目时全量使用：构建文件引入了 easyfk- 开头的组件坐标（如 easyfk-dependencies），或源码包名以 com.mcst 开头；从零新建时用户明确要求按 easyfk 建也算。识别不到时只使用与框架无关的通用规范——最少实现、阿里规范、日志注释、文档与计划、自检与复核，不参考任何 easyfk 内容，并提醒用户能力会打折。开工前先按正文「项目识别」确认。在这类项目中新增或修改 Controller、Service、Api、Repository、Mapper、Entity、Dto、Remote、Feign、Dubbo、异常、i18n、配置类，开发组件、SDK、starter、中间件、引擎、框架底层、Aeron、aeron-cluster、Disruptor、热路径、自动配置，新建项目或模块、写需求、设计、计划、迭代记录、维护业务数据依赖、复核代码、更新计划状态、画图、代码自检时使用。
+  EasyFK（易架构）后端开发规范：先查框架有没有现成能力，再写能工作的最少实现（YAGNI、先复用、改根因），遵守阿里规范，日志与注释用中文。
+  普通业务按分层写：Dto/Param/Req/Resp → Entity/Mapper/Repository（MyBatis-Plus、String UUID 主键）→ Service → Api/ApiServerImpl → Controller → Remote（Cloud/Dubbo），异常走错误码枚举、多语言用 i18n；架构类项目（starter、SDK、中间件、引擎）按模块拆分、线程模型、契约兼容、自动配置来写。含文档与计划（README、项目说明、业务数据依赖）、复杂改动另起子 agent 复核、自检。
+  在 easyfk 项目（构建文件引入 easyfk- 坐标，或源码包名以 com.mcst 开头）中新增或修改 Controller、Service、Api、Repository、Mapper、Entity、Dto、Remote、异常、i18n、配置类，或新建模块、写设计文档、复核代码时使用；非 easyfk 项目只用通用规范（最少实现、阿里规范、文档与计划、自检），不套框架写法。不负责建项目（generator）、不负责讲框架模块（framework）、不负责反推（reverse）。关键词：easyfk、Java、layering、coding standard、review。
 ---
 
 # EasyFK 开发规范

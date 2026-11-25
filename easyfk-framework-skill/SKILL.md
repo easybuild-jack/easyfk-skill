@@ -1,6 +1,9 @@
 ---
 name: easyfk-framework-skill
-description: EasyFK（易架构，groupId com.mcst）Java 企业级框架的能力地图：框架由哪些工程和模块组成、每个模块提供什么能力、解决什么问题、按需求该选哪个模块，以及框架自带的工具类与已引入的第三方工具库（Hutool、fastjson2、Jackson、MapStruct-Plus 等）清单，避免重复造轮子。覆盖 web / 网关 / 鉴权 / ORM / Redis / MongoDB / ClickHouse / 缓存 / 分布式锁 / 业务编号 / MQ / RPC / 线程池 / Disruptor / Fory 序列化 / Chronicle / WebSocket / XXL-JOB / Nacos / Sentinel / Seata / Knife4j / Aeron / aeron-cluster / etcd-cluster / 通用业务模块，并按项目所用的 easyfk 版本加载对应的文档快照。仅在识别到 easyfk 的项目中使用：构建文件引入了 easyfk- 开头的组件坐标（如 easyfk-dependencies），或源码包名以 com.mcst 开头；从零新建时用户明确要求按 easyfk 建也算。识别不到就不使用。用户要求维护 easyfk-skill 套件本身时（升级到新的 easyfk 版本、对齐某个模块的修改）也使用本 skill，按 maintenance.md 执行。
+description: >-
+  EasyFK（易架构，groupId com.mcst）框架能力地图：有哪些工程与模块、每个模块解决什么问题、按需求该选哪个模块、框架自带的工具类与已引入的第三方库、配置前缀，以及某个类的精确签名（方法重载、常量值、配置默认值）；按项目依赖的 BOM 版本加载对应文档快照。
+  覆盖 web、鉴权、ORM、Redis、缓存、分布式锁、业务编号、MQ、RPC、线程池、Disruptor、序列化、WebSocket、调度、注册中心、事务、Aeron、etcd 等，也负责维护套件自身（升级 easyfk 版本、同步快照）。
+  仅在 easyfk 项目使用：构建文件引入 easyfk- 坐标，或源码包名以 com.mcst 开头；识别不到就不用。在模块选型、找现成能力、确认类名与配置、处理版本差异时使用。不负责写业务代码（dev）、不负责建项目（generator）、不负责反推系统（reverse）。关键词：easyfk、framework、module、API signature、config。
 ---
 
 # EasyFK 框架能力地图

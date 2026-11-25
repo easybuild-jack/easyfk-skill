@@ -1,10 +1,9 @@
 ---
 name: easyfk-reverse-skill
 description: >-
-  从 easyfk 项目已有的代码和文档反推业务和架构，输出两份 Markdown 报告：业务分析报告、架构分析报告，放 docs/reverse/，文件名带项目名前缀（如 trade-server-业务分析报告.md）。业务报告先写总体（职责、模块、总体流程、调用链），再写每个模块的细节，每个模块先写高可用、再写业务流程；架构报告先写整体系统架构和技术选型，再写每个子模块的系统架构、数据与外部依赖、配置项。两份报告的模块名一致，复杂时按模块拆文件。
-  同时整理这个项目依赖、自管理、对外提供了哪些业务数据（业务数据依赖：如依赖行情数据、仓位数据），目的是让上层分派任务时知道该项目涉及哪些业务数据，本项目收到任务后再据此判断改动范围；项目已有 docs/<项目名>项目说明.md 时写进它的「业务数据依赖」一节，没有时单独出 docs/reverse/<项目名>-业务数据依赖.md。
-  按 easyfk 的方式找入口和追调用：Controller、Cloud / Dubbo 远程、MQ 消费、XXL-JOB、Disruptor、Aeron、aeron-cluster、etcd 选主；Gradle 分层模块（-api / -server / -prd / -sc / -orm）合并成业务模块；判断 IXxxApi 实际是本地还是远程实现；只调框架基础方法的标准 CRUD 实体归并成一张表，只给有业务判断的方法画图；框架调用先查 easyfk-framework-skill，只写业务决定。以代码为准，追不到的写「代码中未找到」，不编译、不运行、不改代码。重复执行时只改对不上的部分。图用标准 Mermaid。
-  仅在识别到 easyfk 的项目中使用：构建文件引入了 easyfk- 开头的组件坐标（如 easyfk-dependencies），或源码包名以 com.mcst 开头。识别不到就不使用。在从代码还原业务、反推流程、业务分析报告、架构分析报告、业务数据依赖、依赖了哪些业务数据、哪些数据变更会影响本项目、反推高可用或集群方案、补流程图、时序图或架构图、接手或梳理已有 easyfk 项目时使用。不用于新功能开发。
+  从 easyfk 现有代码反推业务与架构，输出两份 Markdown 报告：业务分析报告（总体职责、模块、流程、调用链，逐模块的高可用与业务流程）与架构分析报告（系统架构、技术选型、子模块、数据与外部依赖、配置项），放 docs/reverse/；同时整理项目依赖、自管理、对外提供的业务数据（业务数据依赖）。
+  按 easyfk 方式找入口：Controller、Cloud/Dubbo、MQ、XXL-JOB、Disruptor、Aeron、etcd 选主；Gradle 分层模块合并成业务模块，只给有业务判断的方法画图，框架调用先查 framework-skill。以代码为准，追不到写「代码中未找到」，不编译、不运行、不改代码；图用 Mermaid。
+  仅在 easyfk 项目使用。在接手老项目、梳理业务流程、补架构/时序/流程图、评估数据变更影响时使用；不用于新功能开发。关键词：reverse engineering、legacy、business analysis、architecture、Mermaid。
 ---
 
 # EasyFK 从代码反推业务与架构
